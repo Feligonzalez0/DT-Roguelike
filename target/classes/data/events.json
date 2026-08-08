@@ -1,0 +1,184 @@
+[
+  {
+    "id": "captain-worried",
+    "title": "El capitan esta preocupado",
+    "description": "El capitan del plantel te comenta en privado que algunos jugadores cuestionan tu planteo tactico.",
+    "type": "LOCKER_ROOM",
+    "conditions": [],
+    "options": [
+      {
+        "id": "talk-privately",
+        "description": "Hablar personalmente con el capitan",
+        "successChance": 0.7,
+        "requirements": [],
+        "successOutcome": {
+          "description": "Logras calmar las dudas del capitan y el vestuario recupera la confianza en tu plan de juego.",
+          "effects": [
+            { "type": "PLAYERS_RELATION", "amount": 8 },
+            { "type": "CLUB_MORALE", "amount": 5 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "La charla no alcanza para disipar las dudas y algunos jugadores siguen desconfiando del planteo.",
+          "effects": [
+            { "type": "PLAYERS_RELATION", "amount": -3 }
+          ]
+        }
+      },
+      {
+        "id": "back-publicly",
+        "description": "Respaldarlo publicamente en conferencia de prensa",
+        "successChance": 0.55,
+        "requirements": [],
+        "successOutcome": {
+          "description": "Tu respaldo publico fortalece la figura del capitan y mejora tu imagen ante la prensa.",
+          "effects": [
+            { "type": "MEDIA_RELATION", "amount": 6 },
+            { "type": "PLAYERS_RELATION", "amount": 4 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "Tus declaraciones generan mas ruido del esperado y algunos referentes se sienten incomodos.",
+          "effects": [
+            { "type": "MEDIA_RELATION", "amount": -4 }
+          ]
+        }
+      },
+      {
+        "id": "ignore-issue",
+        "description": "Ignorar el problema por ahora",
+        "successChance": 0.3,
+        "requirements": [],
+        "successOutcome": {
+          "description": "El problema se disuelve solo con el correr de los dias.",
+          "effects": [
+            { "type": "CLUB_MORALE", "amount": 1 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "El malestar crece dentro del plantel y comienzan a filtrarse comentarios a la prensa.",
+          "effects": [
+            { "type": "PLAYERS_RELATION", "amount": -8 },
+            { "type": "MEDIA_RELATION", "amount": -3 }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "board-budget-cut",
+    "title": "La directiva pide recortar gastos",
+    "description": "La dirigencia te informa que el presupuesto del club se reducira para el proximo semestre.",
+    "type": "BOARD",
+    "conditions": [],
+    "options": [
+      {
+        "id": "accept-cuts",
+        "description": "Aceptar el recorte sin resistencia",
+        "successChance": 0.8,
+        "requirements": [],
+        "successOutcome": {
+          "description": "La directiva valora tu compromiso institucional y se fortalece la relacion.",
+          "effects": [
+            { "type": "BOARD_RELATION", "amount": 10 },
+            { "type": "CLUB_BUDGET", "amount": -50000 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "El recorte igual se aplica y ademas queda la sensacion de que no defendiste al plantel.",
+          "effects": [
+            { "type": "CLUB_BUDGET", "amount": -50000 },
+            { "type": "PLAYERS_RELATION", "amount": -3 }
+          ]
+        }
+      },
+      {
+        "id": "negotiate-budget",
+        "description": "Negociar para minimizar el impacto deportivo",
+        "successChance": 0.5,
+        "requirements": [
+          { "type": "MANAGER_NEGOTIATION", "operator": "GREATER_OR_EQUAL", "value": 40 }
+        ],
+        "successOutcome": {
+          "description": "Conseguis un recorte mucho menor al planeado gracias a tu capacidad de negociacion.",
+          "effects": [
+            { "type": "CLUB_BUDGET", "amount": -15000 },
+            { "type": "MANAGER_REPUTATION", "amount": 3 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "La negociacion no prospera y el recorte se aplica igualmente, generando tension con la directiva.",
+          "effects": [
+            { "type": "CLUB_BUDGET", "amount": -50000 },
+            { "type": "BOARD_RELATION", "amount": -5 }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "fans-unhappy-with-style",
+    "title": "La hinchada cuestiona el estilo de juego",
+    "description": "Los hinchas expresan en redes sociales su descontento con el estilo de juego del equipo, a pesar de los resultados.",
+    "type": "FANS",
+    "conditions": [],
+    "options": [
+      {
+        "id": "explain-style",
+        "description": "Explicar publicamente la idea futbolistica",
+        "successChance": 0.6,
+        "requirements": [],
+        "successOutcome": {
+          "description": "Tus declaraciones ayudan a que la hinchada entienda y acompañe el proceso.",
+          "effects": [
+            { "type": "FANS_RELATION", "amount": 7 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "Las explicaciones no convencen y las criticas continuan.",
+          "effects": [
+            { "type": "FANS_RELATION", "amount": -2 }
+          ]
+        }
+      },
+      {
+        "id": "adapt-style",
+        "description": "Adaptar el estilo de juego a lo que pide la gente",
+        "successChance": 0.5,
+        "requirements": [],
+        "successOutcome": {
+          "description": "El cambio de enfoque entusiasma a la hinchada, aunque te aleja un poco de tu idea original.",
+          "effects": [
+            { "type": "FANS_RELATION", "amount": 10 },
+            { "type": "MANAGER_TACTICS", "amount": -2 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "El cambio brusco de idea confunde al plantel y no convence a nadie.",
+          "effects": [
+            { "type": "CLUB_FORM", "amount": -5 }
+          ]
+        }
+      },
+      {
+        "id": "ignore-fans",
+        "description": "Mantener el rumbo e ignorar las criticas",
+        "successChance": 0.4,
+        "requirements": [],
+        "successOutcome": {
+          "description": "Con el tiempo los resultados le dan la razon a tu idea y las criticas bajan.",
+          "effects": [
+            { "type": "MANAGER_REPUTATION", "amount": 4 }
+          ]
+        },
+        "failureOutcome": {
+          "description": "El malestar de la hinchada crece y comienza a notarse en la cancha.",
+          "effects": [
+            { "type": "FANS_RELATION", "amount": -8 },
+            { "type": "JOB_SECURITY", "amount": -5 }
+          ]
+        }
+      }
+    ]
+  }
+]

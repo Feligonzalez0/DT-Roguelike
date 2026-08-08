@@ -1,0 +1,9 @@
+[
+  {
+    "id": "arg-liga-profesional",
+    "name": "Liga Profesional Argentina",
+    "country": "Argentina",
+    "level": 1,
+    "strength": 80
+  }
+]

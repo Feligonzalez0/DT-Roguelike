@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - DT Roguelike</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+{{#dashboard}}
+<main class="page">
+    <header class="page-header dashboard-header">
+        <div>
+            <h1>{{manager.name}}</h1>
+            <p class="muted">{{manager.nationality}} · {{manager.age}} años · Estilo: {{manager.style}}</p>
+        </div>
+        <div class="phase-badge">Fase: {{gamePhase}}</div>
+    </header>
+
+    {{#lastMatchMessage}}
+    <div class="banner">{{lastMatchMessage}}</div>
+    {{/lastMatchMessage}}
+
+    <section class="dashboard-grid">
+        <div class="card">
+            <h2>Director Técnico</h2>
+            <p>Reputación: <strong>{{manager.reputation}}</strong>/100</p>
+            <ul class="stat-list">
+                <li>Táctica: {{manager.tactics}}</li>
+                <li>Liderazgo: {{manager.leadership}}</li>
+                <li>Gestión: {{manager.management}}</li>
+                <li>Negociación: {{manager.negotiation}}</li>
+                <li>Desarrollo juvenil: {{manager.youthDevelopment}}</li>
+                <li>Motivación: {{manager.motivation}}</li>
+            </ul>
+        </div>
+
+        {{#hasClub}}
+        <div class="card">
+            <h2>{{club.name}}</h2>
+            <p class="muted">{{club.league}} · Presupuesto ${{club.budget}}</p>
+            <ul class="stat-list">
+                <li>Reputación del club: {{club.reputation}}</li>
+                <li>Ataque: {{club.attack}}</li>
+                <li>Mediocampo: {{club.midfield}}</li>
+                <li>Defensa: {{club.defense}}</li>
+                <li>Moral: {{club.morale}}</li>
+                <li>Relación directiva: {{club.boardRelation}}</li>
+                <li>Relación hinchada: {{club.fansRelation}}</li>
+                <li>Relación jugadores: {{club.playersRelation}}</li>
+            </ul>
+        </div>
+        {{/hasClub}}
+
+        {{#season}}
+        <div class="card">
+            <h2>Temporada {{season.year}}</h2>
+            <p class="muted">Fase: {{season.phase}}</p>
+            <ul class="stat-list">
+                <li>Partidos jugados: {{season.matchesPlayed}}</li>
+                <li>Victorias: {{season.wins}}</li>
+                <li>Empates: {{season.draws}}</li>
+                <li>Derrotas: {{season.losses}}</li>
+                <li>Goles a favor: {{season.goalsFor}}</li>
+                <li>Goles en contra: {{season.goalsAgainst}}</li>
+                <li>Puntos: {{season.points}}</li>
+            </ul>
+        </div>
+        {{/season}}
+    </section>
+
+    {{#hasClub}}
+    <section class="actions">
+        <form action="/career/match/simulate" method="post">
+            <button class="btn btn-primary" type="submit">Simular próximo partido</button>
+        </form>
+        <form action="/career/season/finish" method="post">
+            <button class="btn btn-secondary" type="submit">Finalizar temporada</button>
+        </form>
+    </section>
+    {{/hasClub}}
+</main>
+{{/dashboard}}
+</body>
+</html>

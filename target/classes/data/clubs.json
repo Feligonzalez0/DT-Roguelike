@@ -1,0 +1,142 @@
+[
+  {
+    "id": "river-plate",
+    "name": "River Plate",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 92,
+    "attack": 85,
+    "midfield": 82,
+    "defense": 80
+  },
+  {
+    "id": "boca-juniors",
+    "name": "Boca Juniors",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 91,
+    "attack": 80,
+    "midfield": 80,
+    "defense": 83
+  },
+  {
+    "id": "racing-club",
+    "name": "Racing Club",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 78,
+    "attack": 72,
+    "midfield": 74,
+    "defense": 70
+  },
+  {
+    "id": "independiente",
+    "name": "Independiente",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 74,
+    "attack": 68,
+    "midfield": 70,
+    "defense": 68
+  },
+  {
+    "id": "san-lorenzo",
+    "name": "San Lorenzo",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 72,
+    "attack": 66,
+    "midfield": 68,
+    "defense": 66
+  },
+  {
+    "id": "talleres",
+    "name": "Talleres",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 75,
+    "attack": 72,
+    "midfield": 70,
+    "defense": 71
+  },
+  {
+    "id": "belgrano",
+    "name": "Belgrano",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 60,
+    "attack": 58,
+    "midfield": 60,
+    "defense": 58
+  },
+  {
+    "id": "rosario-central",
+    "name": "Rosario Central",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 68,
+    "attack": 64,
+    "midfield": 65,
+    "defense": 63
+  },
+  {
+    "id": "newells",
+    "name": "Newell's Old Boys",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 66,
+    "attack": 62,
+    "midfield": 64,
+    "defense": 62
+  },
+  {
+    "id": "estudiantes",
+    "name": "Estudiantes de La Plata",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 73,
+    "attack": 67,
+    "midfield": 70,
+    "defense": 69
+  },
+  {
+    "id": "gimnasia-lp",
+    "name": "Gimnasia y Esgrima La Plata",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 55,
+    "attack": 52,
+    "midfield": 54,
+    "defense": 53
+  },
+  {
+    "id": "velez",
+    "name": "Velez Sarsfield",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 71,
+    "attack": 66,
+    "midfield": 68,
+    "defense": 65
+  },
+  {
+    "id": "huracan",
+    "name": "Huracan",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 58,
+    "attack": 55,
+    "midfield": 56,
+    "defense": 55
+  },
+  {
+    "id": "banfield",
+    "name": "Banfield",
+    "country": "Argentina",
+    "leagueId": "arg-liga-profesional",
+    "reputation": 52,
+    "attack": 50,
+    "midfield": 51,
+    "defense": 50
+  }
+]

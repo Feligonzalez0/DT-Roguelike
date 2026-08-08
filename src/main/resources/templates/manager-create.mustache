@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Director Tecnico - DT Roguelike</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="page">
+    <header class="page-header">
+        <h1>Crear tu Director Tecnico</h1>
+        <p>Definí quién sos antes de arrancar tu carrera.</p>
+    </header>
+
+    <form class="card form" action="/career/create" method="post">
+        <label class="field">
+            <span>Nombre</span>
+            <input type="text" name="name" required maxlength="40" placeholder="Ej: Marcelo Bianchi">
+        </label>
+
+        <label class="field">
+            <span>Edad</span>
+            <input type="number" name="age" required min="28" max="70" value="35">
+        </label>
+
+        <label class="field">
+            <span>Nacionalidad</span>
+            <input type="text" name="nationality" required maxlength="30" placeholder="Ej: Argentina">
+        </label>
+
+        <fieldset class="field">
+            <legend>Estilo de DT</legend>
+            <div class="style-grid">
+                {{#styles}}
+                <label class="style-option">
+                    <input type="radio" name="style" value="{{value}}" required>
+                    <span class="style-name">{{label}}</span>
+                    <span class="style-desc">{{description}}</span>
+                </label>
+                {{/styles}}
+            </div>
+        </fieldset>
+
+        <button class="btn btn-primary" type="submit">Comenzar carrera</button>
+    </form>
+</main>
+</body>
+</html>
