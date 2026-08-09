@@ -16,10 +16,6 @@
         <div class="phase-badge">Fase: {{gamePhase}}</div>
     </header>
 
-    {{#lastMatchMessage}}
-    <div class="banner">{{lastMatchMessage}}</div>
-    {{/lastMatchMessage}}
-
     <section class="dashboard-grid">
         <div class="card">
             <h2>Director Técnico</h2>
@@ -70,12 +66,31 @@
 
     {{#hasClub}}
     <section class="actions">
-        <form action="/career/match/simulate" method="post">
-            <button class="btn btn-primary" type="submit">Simular próximo partido</button>
+
+        <form action="/career/season/advance" method="post">
+            <button class="btn btn-primary" type="submit">
+                [DEBUG] Avanzar fase
+            </button>
         </form>
-        <form action="/career/season/finish" method="post">
-            <button class="btn btn-secondary" type="submit">Finalizar temporada</button>
-        </form>
+
+        {{#season}}
+            {{#isRegularSeason}}
+            <form action="/career/season/finish" method="post">
+                <button class="btn btn-secondary" type="submit">
+                    Finalizar temporada
+                </button>
+            </form>
+            {{/isRegularSeason}}
+
+            {{#isSummary}}
+            <form action="/career/season/next" method="post">
+                <button class="btn btn-secondary" type="submit">
+                    Nueva temporada
+                </button>
+            </form>
+            {{/isSummary}}
+        {{/season}}
+
     </section>
     {{/hasClub}}
 </main>

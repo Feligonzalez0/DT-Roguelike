@@ -60,14 +60,20 @@ public class WebRoutes {
 
         get("/career/dashboard", (req, res) -> render(careerController.showDashboard(), "dashboard.mustache"));
 
-        post("/career/match/simulate", (req, res) -> {
-            careerController.simulateNextMatch();
+        post("/career/season/advance", (req, res) -> {
+            careerController.advancePhase();
             res.redirect("/career/dashboard");
             return null;
         });
 
         post("/career/season/finish", (req, res) -> {
             careerController.finishSeason();
+            res.redirect("/career/dashboard");
+            return null;
+        });
+
+        post("/career/season/next", (req, res) -> {
+            careerController.startNextSeason();
             res.redirect("/career/dashboard");
             return null;
         });

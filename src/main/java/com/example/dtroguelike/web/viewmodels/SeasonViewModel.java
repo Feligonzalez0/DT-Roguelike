@@ -1,6 +1,7 @@
 package com.example.dtroguelike.web.viewmodels;
 
 import com.example.dtroguelike.domain.season.Season;
+import com.example.dtroguelike.domain.season.SeasonPhase;
 
 /**
  * Representacion plana de la temporada actual para el dashboard.
@@ -16,6 +17,11 @@ public class SeasonViewModel {
     public final int goalsFor;
     public final int goalsAgainst;
     public final int points;
+    public final boolean isPreseason;
+    public final boolean isTransferWindow;
+    public final boolean isRegularSeason;
+    public final boolean isEndOfSeason;
+    public final boolean isSummary;
 
     public SeasonViewModel(Season season) {
         this.year = season.getYear();
@@ -27,5 +33,10 @@ public class SeasonViewModel {
         this.goalsFor = season.getStats().getGoalsFor();
         this.goalsAgainst = season.getStats().getGoalsAgainst();
         this.points = season.getStats().getPoints();
+        this.isPreseason = season.getPhase() == SeasonPhase.PRESEASON;
+        this.isTransferWindow = season.getPhase() == SeasonPhase.TRANSFER_WINDOW;
+        this.isRegularSeason = season.getPhase() == SeasonPhase.REGULAR_SEASON;
+        this.isEndOfSeason = season.getPhase() == SeasonPhase.END_OF_SEASON;
+        this.isSummary = season.getPhase() == SeasonPhase.SUMMARY;
     }
 }

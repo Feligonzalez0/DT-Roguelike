@@ -8,6 +8,7 @@ import com.example.dtroguelike.domain.club.Club;
 import com.example.dtroguelike.domain.common.GamePhase;
 import com.example.dtroguelike.domain.manager.Manager;
 import com.example.dtroguelike.domain.season.Season;
+import com.example.dtroguelike.domain.season.SeasonPhase;
 
 /**
  * Orquestador principal de una carrera. Delega el trabajo especifico a
@@ -41,7 +42,7 @@ public class CareerEngine {
         career.assignClub(club);
         career.getManager().getStats().incrementClubsManaged();
         career.setState(CareerState.ACTIVE);
-        career.setPhase(GamePhase.PRESEASON);
+
         startSeason(career, currentYearFor(career));
     }
 
@@ -53,19 +54,54 @@ public class CareerEngine {
         career.setPhase(GamePhase.PRESEASON);
     }
 
+    /** PRESEASON -> TRANSFER_WINDOW. */
+    public void startTransferWindow(Career career) {
+        requireSeasonPhase(career, SeasonPhase.PRESEASON);
+        career.getCurrentSeason().startTransferWindow();
+        career.setPhase(GamePhase.TRANSFER_WINDOW);
+    }
+
+    /** TRANSFER_WINDOW -> REGULAR_SEASON. */
+    public void startRegularSeason(Career career) {
+        requireSeasonPhase(career, SeasonPhase.TRANSFER_WINDOW);
+        career.getCurrentSeason().startRegularSeason();
+        career.setPhase(GamePhase.REGULAR_SEASON);
+    }
+
     /**
-     * Cierra la temporada actual: actualiza reputacion, progresion del
-     * Manager y deja la carrera lista para la siguiente temporada.
+     * Cierra la temporada: REGULAR_SEASON -> END_OF_SEASON.
      */
     public void finishSeason(Career career) {
-        if (career.getCurrentSeason() == null) {
-            return;
+        requireSeasonPhase(career, SeasonPhase.REGULAR_SEASON);
+
+        Season season = career.getCurrentSeason();
+        if (season == null) {
+            throw new IllegalStateException("No hay una temporada activa.");
         }
-        seasonSimulator.finishSeason(career.getCurrentSeason());
+
         reputationEngine.updateAfterSeason(career);
         reputationEngine.adjustJobSecurity(career.getCurrentClubState());
         progressionEngine.applyManagerGrowth(career);
+
+        season.finish();
+        
         career.setPhase(GamePhase.END_OF_SEASON);
+    }
+
+    /** END_OF_SEASON -> SUMMARY. */
+    public void showSeasonSummary(Career career) {
+        requireSeasonPhase(career, SeasonPhase.END_OF_SEASON);
+        career.getCurrentSeason().showSummary();
+        career.setPhase(GamePhase.SUMMARY);
+    }
+
+    /**
+     * SUMMARY -> nueva Season con el año siguiente, comenzando en PRESEASON.
+     */
+    public void startNextSeason(Career career) {
+        requireSeasonPhase(career, SeasonPhase.SUMMARY);
+        int nextYear = career.getCurrentSeason().getYear() + 1;
+        startSeason(career, nextYear);
     }
 
     /** El club despide al Manager. */
@@ -98,6 +134,19 @@ public class CareerEngine {
             history.setIdolatry(career.getCurrentClubState().getIdolatry());
         }
         career.addClubHistory(history);
+    }
+
+    private void requireSeasonPhase(Career career, SeasonPhase expected) {
+        if (career == null || career.getCurrentSeason() == null) {
+            throw new IllegalStateException("No hay una temporada activa.");
+        }
+        SeasonPhase actual = career.getCurrentSeason().getPhase();
+        if (actual != expected) {
+            throw new IllegalStateException(
+                    "No se puede realizar esta transicion desde " + actual
+                            + "; se esperaba " + expected + "."
+            );
+        }
     }
 
     private int currentYearFor(Career career) {

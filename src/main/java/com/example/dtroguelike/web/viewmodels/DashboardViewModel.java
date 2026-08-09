@@ -13,16 +13,14 @@ public class DashboardViewModel {
     public final SeasonViewModel season;
     public final String careerState;
     public final String gamePhase;
-    public final String lastMatchMessage;
     public final boolean hasClub;
 
-    public DashboardViewModel(Career career, String lastMatchMessage) {
+    public DashboardViewModel(Career career) {
         this.manager = new ManagerViewModel(career.getManager());
         this.hasClub = career.getCurrentClub() != null;
         this.club = hasClub ? new ClubViewModel(career.getCurrentClub(), career.getCurrentClubState()) : null;
         this.season = career.getCurrentSeason() != null ? new SeasonViewModel(career.getCurrentSeason()) : null;
         this.careerState = career.getState().name();
         this.gamePhase = career.getPhase().name();
-        this.lastMatchMessage = lastMatchMessage;
     }
 }

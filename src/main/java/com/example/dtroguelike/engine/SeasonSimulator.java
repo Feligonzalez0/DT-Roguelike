@@ -15,8 +15,7 @@ import java.util.Random;
 /**
  * Simulador simplificado de temporada. Para el MVP no construye un
  * fixture completo de liga; simplemente permite avanzar la temporada
- * simulando partidos individuales contra rivales elegidos al azar de
- * la misma liga.
+ * simulando partidos individuales contra rivales elegidos al azar.
  */
 public class SeasonSimulator {
 
@@ -37,13 +36,20 @@ public class SeasonSimulator {
      * rival elegido al azar de la lista provista, y actualiza las
      * estadisticas de la temporada.
      *
+     * Solo se pueden simular partidos durante REGULAR_SEASON.
+     *
      * TODO: reemplazar por un fixture real de liga (ida y vuelta contra
      * todos los equipos) en una iteracion futura.
      */
     public MatchResult simulateNextStep(Career career, List<Club> possibleRivals) {
         Season season = career.getCurrentSeason();
         Club home = career.getCurrentClub();
+
         if (season == null || home == null || possibleRivals == null || possibleRivals.isEmpty()) {
+            return null;
+        }
+
+        if (season.getPhase() != SeasonPhase.REGULAR_SEASON) {
             return null;
         }
 
@@ -54,17 +60,6 @@ public class SeasonSimulator {
         season.addMatch(match);
         season.getStats().registerMatch(result.getHomeGoals(), result.getAwayGoals());
 
-        if (season.getPhase() == SeasonPhase.PRESEASON) {
-            season.setPhase(SeasonPhase.REGULAR_SEASON);
-        }
-
         return result;
-    }
-
-    /** Cierra la temporada actual, avanzando su fase a END_OF_SEASON. */
-    public void finishSeason(Season season) {
-        if (season != null) {
-            season.setPhase(SeasonPhase.END_OF_SEASON);
-        }
     }
 }

@@ -29,8 +29,47 @@ public class Season {
         return phase;
     }
 
-    public void setPhase(SeasonPhase phase) {
-        this.phase = phase;
+    /**
+     * Avanza de PRESEASON a TRANSFER_WINDOW.
+     */
+    public void startTransferWindow() {
+        requirePhase(SeasonPhase.PRESEASON);
+        phase = SeasonPhase.TRANSFER_WINDOW;
+    }
+
+    /**
+     * Avanza de TRANSFER_WINDOW a REGULAR_SEASON.
+     */
+    public void startRegularSeason() {
+        requirePhase(SeasonPhase.TRANSFER_WINDOW);
+        phase = SeasonPhase.REGULAR_SEASON;
+    }
+
+    /**
+     * Avanza de REGULAR_SEASON a END_OF_SEASON.
+     */
+    public void finish() {
+        requirePhase(SeasonPhase.REGULAR_SEASON);
+        phase = SeasonPhase.END_OF_SEASON;
+    }
+
+    /**
+     * Avanza de END_OF_SEASON a SUMMARY.
+     */
+    public void showSummary() {
+        requirePhase(SeasonPhase.END_OF_SEASON);
+        phase = SeasonPhase.SUMMARY;
+    }
+
+    /*
+    Chequeo que la fase requerida coincida.
+     */
+    private void requirePhase(SeasonPhase expected) {
+        if (phase != expected) {
+            throw new IllegalStateException(
+                    "No se puede avanzar de " + phase + "; se esperaba " + expected + "."
+            );
+        }
     }
 
     public SeasonStats getStats() {

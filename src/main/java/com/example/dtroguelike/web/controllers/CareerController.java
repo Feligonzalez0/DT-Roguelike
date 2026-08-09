@@ -3,7 +3,6 @@ package com.example.dtroguelike.web.controllers;
 import com.example.dtroguelike.application.CareerService;
 import com.example.dtroguelike.application.SeasonService;
 import com.example.dtroguelike.domain.career.Career;
-import com.example.dtroguelike.domain.match.MatchResult;
 import com.example.dtroguelike.web.viewmodels.DashboardViewModel;
 
 import java.util.Map;
@@ -17,7 +16,6 @@ public class CareerController {
 
     private final CareerService careerService;
     private final SeasonService seasonService;
-    private String lastMatchMessage;
 
     public CareerController(CareerService careerService, SeasonService seasonService) {
         this.careerService = careerService;
@@ -26,31 +24,42 @@ public class CareerController {
 
     public Map<String, Object> showDashboard() {
         Career career = requireCurrentCareer();
-        DashboardViewModel viewModel = new DashboardViewModel(career, lastMatchMessage);
+        DashboardViewModel viewModel = new DashboardViewModel(career);
         return Map.of("dashboard", viewModel);
-    }
-
-    public Career simulateNextMatch() {
-        Career career = requireCurrentCareer();
-        MatchResult result = seasonService.simulateNextMatch(career);
-        if (result != null) {
-            lastMatchMessage = "Resultado: " + career.getCurrentClub().getName()
-                    + " " + result.scoreLine();
-        } else {
-            lastMatchMessage = "No fue posible simular un partido en este momento.";
-        }
-        return career;
     }
 
     public Career finishSeason() {
         Career career = requireCurrentCareer();
         seasonService.finishSeason(career);
-        lastMatchMessage = null;
         return career;
     }
+
+    public Career advancePhase() {
+        Career career = requireCurrentCareer();
+
+        switch (career.getCurrentSeason().getPhase()) {
+            case PRESEASON ->
+                    seasonService.startTransferWindow(career);
+            case TRANSFER_WINDOW ->
+                    seasonService.startRegularSeason(career);
+            case END_OF_SEASON ->
+                    seasonService.showSeasonSummary(career);
+            default ->
+                    throw new IllegalStateException(
+                            "No se puede avanzar automáticamente desde la fase "
+                                    + career.getCurrentSeason().getPhase());
+        }
+        return career;
+    }    
 
     private Career requireCurrentCareer() {
         Optional<Career> career = careerService.getCurrentCareer();
         return career.orElseThrow(() -> new IllegalStateException("No hay una carrera activa."));
+    }
+
+    public Career startNextSeason() {
+        Career career = requireCurrentCareer();
+        seasonService.startNextSeason(career);
+        return career;
     }
 }

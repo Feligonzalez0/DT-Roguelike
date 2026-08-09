@@ -6,6 +6,5 @@ public enum SeasonPhase {
     TRANSFER_WINDOW,
     REGULAR_SEASON,
     END_OF_SEASON,
-    AWARDS,
     SUMMARY
 }
