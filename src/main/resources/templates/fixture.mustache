@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fixture - DT Roguelike</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <div class="fixture-page-header">
+
+        <div>
+            <h1>Fixture</h1>
+
+            <p class="fixture-subtitle">
+                {{fixture.clubName}}
+                · Temporada {{fixture.seasonYear}}
+            </p>
+        </div>
+
+        <a href="/career/dashboard"
+           class="fixture-back-link">
+            ← Volver al dashboard
+        </a>
+
+    </div>
+
+
+    <div class="fixture-full-list">
+
+        {{#fixture.rounds}}
+
+        <section class="fixture-round-card">
+
+            <div class="fixture-round-header">
+                <h2>
+                    Fecha {{round}}
+                </h2>
+            </div>
+
+
+            {{#matches}}
+
+            <div class="fixture-match {{resultClass}}">
+
+                <div class="fixture-match-info">
+
+                    <div class="fixture-opponent">
+                        vs {{opponent}}
+                    </div>
+
+                    <div class="fixture-home-away">
+                        {{homeAway}}
+                    </div>
+
+                </div>
+
+                <div class="fixture-result">
+                    {{result}}
+                </div>
+
+            </div>
+
+            {{/matches}}
+
+        </section>
+
+        {{/fixture.rounds}}
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,5 +1,7 @@
 package com.example.dtroguelike.engine;
 
+import java.util.List;
+
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.career.CareerState;
 import com.example.dtroguelike.domain.career.ClubDepartureReason;
@@ -7,6 +9,7 @@ import com.example.dtroguelike.domain.career.ClubHistory;
 import com.example.dtroguelike.domain.club.Club;
 import com.example.dtroguelike.domain.common.GamePhase;
 import com.example.dtroguelike.domain.manager.Manager;
+import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.season.Season;
 import com.example.dtroguelike.domain.season.SeasonPhase;
 
@@ -20,13 +23,20 @@ public class CareerEngine {
     private final SeasonSimulator seasonSimulator;
     private final ReputationEngine reputationEngine;
     private final ProgressionEngine progressionEngine;
+    private final FixtureGenerator fixtureGenerator;
+    private final List<Club> allClubs;
+    private Career currentCareer;
 
     public CareerEngine(SeasonSimulator seasonSimulator,
                          ReputationEngine reputationEngine,
-                         ProgressionEngine progressionEngine) {
+                         ProgressionEngine progressionEngine,
+                         FixtureGenerator fixtureGenerator,
+                         List<Club> allClubs) {
         this.seasonSimulator = seasonSimulator;
         this.reputationEngine = reputationEngine;
         this.progressionEngine = progressionEngine;
+        this.fixtureGenerator = fixtureGenerator;
+        this.allClubs = allClubs;
     }
 
     /** Crea una carrera nueva a partir de un Manager recien creado. */
@@ -34,6 +44,9 @@ public class CareerEngine {
         Career career = new Career(manager);
         career.setState(CareerState.LOOKING_FOR_CLUB);
         career.setPhase(GamePhase.CLUB_SELECTION);
+
+        this.currentCareer = career;
+
         return career;
     }
 
@@ -49,6 +62,12 @@ public class CareerEngine {
     /** Comienza una nueva temporada dentro de la carrera actual. */
     public void startSeason(Career career, int year) {
         Season season = new Season(year);
+
+        List<Club> leagueClubs = clubsOfManagedLeague(career);
+        List<Match> fixture = fixtureGenerator.generate(leagueClubs, year);
+
+        season.addMatches(fixture);
+        
         career.setCurrentSeason(season);
         career.getManager().getStats().incrementSeasonsManaged();
         career.setPhase(GamePhase.PRESEASON);
@@ -84,7 +103,7 @@ public class CareerEngine {
         progressionEngine.applyManagerGrowth(career);
 
         season.finish();
-        
+
         career.setPhase(GamePhase.END_OF_SEASON);
     }
 
@@ -153,4 +172,25 @@ public class CareerEngine {
         return career.getCurrentSeason() != null ? career.getCurrentSeason().getYear() + 1
                 : java.time.Year.now().getValue();
     }
+
+    public Career getCurrentCareer() {
+        return currentCareer;
+    }
+
+    // Obtener solo los clubes de la liga dirigida
+    private List<Club> clubsOfManagedLeague(Career career) {
+        Club managedClub = career.getCurrentClub();
+
+        if (managedClub == null) {
+            throw new IllegalStateException(
+                    "No hay un club dirigido actualmente."
+            );
+        }
+
+        return allClubs.stream()
+                .filter(club ->
+                        club.getLeague().equals(managedClub.getLeague()))
+                .toList();
+    }
+
 }

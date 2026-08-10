@@ -19,7 +19,7 @@ public class DashboardViewModel {
         this.manager = new ManagerViewModel(career.getManager());
         this.hasClub = career.getCurrentClub() != null;
         this.club = hasClub ? new ClubViewModel(career.getCurrentClub(), career.getCurrentClubState()) : null;
-        this.season = career.getCurrentSeason() != null ? new SeasonViewModel(career.getCurrentSeason()) : null;
+        this.season = career.getCurrentSeason() != null ? new SeasonViewModel(career.getCurrentSeason(), career.getCurrentClub()) : null;
         this.careerState = career.getState().name();
         this.gamePhase = career.getPhase().name();
     }

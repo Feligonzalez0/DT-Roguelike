@@ -3,6 +3,7 @@ package com.example.dtroguelike.domain.season;
 import com.example.dtroguelike.domain.match.Match;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,42 +29,51 @@ public class Season {
     public SeasonPhase getPhase() {
         return phase;
     }
+    public SeasonStats getStats() {
+        return stats;
+    }
 
-    /**
-     * Avanza de PRESEASON a TRANSFER_WINDOW.
-     */
+    public List<Match> getMatches() {
+        return Collections.unmodifiableList(matches);
+    }
+
+    public void addMatch(Match match) {
+        matches.add(match);
+    }
+
+    public void addMatches(List<Match> matches){
+        this.matches.addAll(matches);
+    }
+    
+    /*
+    * Transiciones de fase.
+    */
+
+    //Avanza de PRESEASON a TRANSFER_WINDOW.
     public void startTransferWindow() {
         requirePhase(SeasonPhase.PRESEASON);
         phase = SeasonPhase.TRANSFER_WINDOW;
     }
 
-    /**
-     * Avanza de TRANSFER_WINDOW a REGULAR_SEASON.
-     */
+    //Avanza de TRANSFER_WINDOW a REGULAR_SEASON.
     public void startRegularSeason() {
         requirePhase(SeasonPhase.TRANSFER_WINDOW);
         phase = SeasonPhase.REGULAR_SEASON;
     }
 
-    /**
-     * Avanza de REGULAR_SEASON a END_OF_SEASON.
-     */
+    //Avanza de REGULAR_SEASON a END_OF_SEASON.
     public void finish() {
         requirePhase(SeasonPhase.REGULAR_SEASON);
         phase = SeasonPhase.END_OF_SEASON;
     }
 
-    /**
-     * Avanza de END_OF_SEASON a SUMMARY.
-     */
+    //Avanza de END_OF_SEASON a SUMMARY.
     public void showSummary() {
         requirePhase(SeasonPhase.END_OF_SEASON);
         phase = SeasonPhase.SUMMARY;
     }
 
-    /*
-    Chequeo que la fase requerida coincida.
-     */
+    //Chequeo que la fase requerida coincida.
     private void requirePhase(SeasonPhase expected) {
         if (phase != expected) {
             throw new IllegalStateException(
@@ -72,15 +82,4 @@ public class Season {
         }
     }
 
-    public SeasonStats getStats() {
-        return stats;
-    }
-
-    public List<Match> getMatches() {
-        return matches;
-    }
-
-    public void addMatch(Match match) {
-        matches.add(match);
-    }
 }

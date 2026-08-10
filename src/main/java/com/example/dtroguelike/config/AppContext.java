@@ -1,20 +1,11 @@
 package com.example.dtroguelike.config;
 
-import com.example.dtroguelike.application.CareerService;
-import com.example.dtroguelike.application.EventService;
-import com.example.dtroguelike.application.ManagerService;
-import com.example.dtroguelike.application.MatchService;
-import com.example.dtroguelike.application.SeasonService;
-import com.example.dtroguelike.engine.CareerEngine;
-import com.example.dtroguelike.engine.ClubOfferGenerator;
-import com.example.dtroguelike.engine.DecisionResolver;
-import com.example.dtroguelike.engine.EventEngine;
-import com.example.dtroguelike.engine.MatchSimulator;
-import com.example.dtroguelike.engine.ProgressionEngine;
-import com.example.dtroguelike.engine.ReputationEngine;
-import com.example.dtroguelike.engine.SeasonSimulator;
-import com.example.dtroguelike.infrastructure.repository.CareerRepository;
-import com.example.dtroguelike.infrastructure.repository.InMemoryCareerRepository;
+import java.util.List;
+
+import com.example.dtroguelike.application.*;
+import com.example.dtroguelike.domain.club.Club;
+import com.example.dtroguelike.engine.*;
+import com.example.dtroguelike.infrastructure.repository.*;
 
 /**
  * Contenedor de dependencias armado a mano (sin frameworks de DI), tal
@@ -39,9 +30,17 @@ public class AppContext {
 
         MatchSimulator matchSimulator = new MatchSimulator();
         SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator);
+
         ReputationEngine reputationEngine = new ReputationEngine();
         ProgressionEngine progressionEngine = new ProgressionEngine();
-        CareerEngine careerEngine = new CareerEngine(seasonSimulator, reputationEngine, progressionEngine);
+
+        FixtureGenerator fixtureGenerator = new FixtureGenerator();
+        List<Club> allClubs = gameData.getClubs();
+        
+        CareerEngine careerEngine = new CareerEngine(seasonSimulator, 
+                                    reputationEngine, progressionEngine, 
+                                    fixtureGenerator, allClubs);
+    
         ClubOfferGenerator clubOfferGenerator = new ClubOfferGenerator(gameData.getClubs());
         EventEngine eventEngine = new EventEngine(gameData.getEvents());
         DecisionResolver decisionResolver = new DecisionResolver();

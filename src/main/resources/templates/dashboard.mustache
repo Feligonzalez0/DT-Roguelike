@@ -5,95 +5,411 @@
     <title>Dashboard - DT Roguelike</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
+
 {{#dashboard}}
+
 <main class="page">
+
+    <!-- ================================
+         HEADER
+    ================================= -->
+
     <header class="page-header dashboard-header">
+
         <div>
             <h1>{{manager.name}}</h1>
-            <p class="muted">{{manager.nationality}} · {{manager.age}} años · Estilo: {{manager.style}}</p>
+
+            <p class="muted">
+                {{manager.nationality}}
+                · {{manager.age}} años
+                · Estilo: {{manager.style}}
+            </p>
         </div>
-        <div class="phase-badge">Fase: {{gamePhase}}</div>
+
+        <div class="phase-badge">
+            Fase: {{gamePhase}}
+        </div>
+
     </header>
 
-    <section class="dashboard-grid">
-        <div class="card">
-            <h2>Director Técnico</h2>
-            <p>Reputación: <strong>{{manager.reputation}}</strong>/100</p>
-            <ul class="stat-list">
-                <li>Táctica: {{manager.tactics}}</li>
-                <li>Liderazgo: {{manager.leadership}}</li>
-                <li>Gestión: {{manager.management}}</li>
-                <li>Negociación: {{manager.negotiation}}</li>
-                <li>Desarrollo juvenil: {{manager.youthDevelopment}}</li>
-                <li>Motivación: {{manager.motivation}}</li>
-            </ul>
+
+    <!-- ================================
+         DASHBOARD
+    ================================= -->
+
+    <section class="dashboard-layout">
+
+        <!-- COLUMNA PRINCIPAL -->
+
+        <div class="dashboard-main">
+
+
+            <!-- ================================
+                 TEMPORADA — CARD PRINCIPAL
+            ================================= -->
+
+            {{#season}}
+
+            <section class="season-card">
+
+                <div class="season-card-header">
+
+                    <div>
+                        <p class="season-label">
+                            TEMPORADA
+                        </p>
+
+                        <h2>
+                            Temporada {{season.year}}
+                        </h2>
+                    </div>
+
+                    <div class="season-phase">
+                        {{season.phase}}
+                    </div>
+
+                </div>
+
+
+                <div class="season-stats">
+
+                    <div class="season-stat">
+                        <span class="season-stat-value">
+                            {{season.matchesPlayed}}
+                        </span>
+
+                        <span class="season-stat-label">
+                            Partidos
+                        </span>
+                    </div>
+
+
+                    <div class="season-stat">
+                        <span class="season-stat-value">
+                            {{season.wins}}
+                        </span>
+
+                        <span class="season-stat-label">
+                            Victorias
+                        </span>
+                    </div>
+
+
+                    <div class="season-stat">
+                        <span class="season-stat-value">
+                            {{season.draws}}
+                        </span>
+
+                        <span class="season-stat-label">
+                            Empates
+                        </span>
+                    </div>
+
+
+                    <div class="season-stat">
+                        <span class="season-stat-value">
+                            {{season.losses}}
+                        </span>
+
+                        <span class="season-stat-label">
+                            Derrotas
+                        </span>
+                    </div>
+
+
+                    <div class="season-stat">
+                        <span class="season-stat-value">
+                            {{season.goalsFor}}
+                        </span>
+
+                        <span class="season-stat-label">
+                            Goles a favor
+                        </span>
+                    </div>
+
+
+                    <div class="season-stat">
+                        <span class="season-stat-value">
+                            {{season.goalsAgainst}}
+                        </span>
+
+                        <span class="season-stat-label">
+                            Goles en contra
+                        </span>
+                    </div>
+
+
+                    <div class="season-stat season-points">
+                        <span class="season-stat-value">
+                            {{season.points}}
+                        </span>
+
+                        <span class="season-stat-label">
+                            Puntos
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            {{/season}}
+
+
+            <!-- ================================
+                 INFORMACIÓN SECUNDARIA
+            ================================= -->
+
+            <div class="secondary-cards">
+
+
+                <!-- DIRECTOR TÉCNICO -->
+
+                <div class="card">
+
+                    <h2>Director Técnico</h2>
+
+                    <p>
+                        Reputación:
+                        <strong>{{manager.reputation}}</strong>/100
+                    </p>
+
+                    <ul class="stat-list">
+
+                        <li>
+                            Táctica: {{manager.tactics}}
+                        </li>
+
+                        <li>
+                            Liderazgo: {{manager.leadership}}
+                        </li>
+
+                        <li>
+                            Gestión: {{manager.management}}
+                        </li>
+
+                        <li>
+                            Negociación: {{manager.negotiation}}
+                        </li>
+
+                        <li>
+                            Desarrollo juvenil:
+                            {{manager.youthDevelopment}}
+                        </li>
+
+                        <li>
+                            Motivación: {{manager.motivation}}
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <!-- CLUB -->
+
+                {{#hasClub}}
+
+                <div class="card">
+
+                    <h2>{{club.name}}</h2>
+
+                    <p class="muted">
+                        {{club.league}}
+                        · Presupuesto ${{club.budget}}
+                    </p>
+
+                    <ul class="stat-list">
+
+                        <li>
+                            Reputación del club:
+                            {{club.reputation}}
+                        </li>
+
+                        <li>
+                            Ataque: {{club.attack}}
+                        </li>
+
+                        <li>
+                            Mediocampo: {{club.midfield}}
+                        </li>
+
+                        <li>
+                            Defensa: {{club.defense}}
+                        </li>
+
+                        <li>
+                            Moral: {{club.morale}}
+                        </li>
+
+                        <li>
+                            Relación directiva:
+                            {{club.boardRelation}}
+                        </li>
+
+                        <li>
+                            Relación hinchada:
+                            {{club.fansRelation}}
+                        </li>
+
+                        <li>
+                            Relación jugadores:
+                            {{club.playersRelation}}
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                {{/hasClub}}
+
+            </div>
+
         </div>
 
-        {{#hasClub}}
-        <div class="card">
-            <h2>{{club.name}}</h2>
-            <p class="muted">{{club.league}} · Presupuesto ${{club.budget}}</p>
-            <ul class="stat-list">
-                <li>Reputación del club: {{club.reputation}}</li>
-                <li>Ataque: {{club.attack}}</li>
-                <li>Mediocampo: {{club.midfield}}</li>
-                <li>Defensa: {{club.defense}}</li>
-                <li>Moral: {{club.morale}}</li>
-                <li>Relación directiva: {{club.boardRelation}}</li>
-                <li>Relación hinchada: {{club.fansRelation}}</li>
-                <li>Relación jugadores: {{club.playersRelation}}</li>
-            </ul>
-        </div>
-        {{/hasClub}}
+
+        <!-- ================================
+             SIDEBAR — FIXTURE
+        ================================= -->
 
         {{#season}}
-        <div class="card">
-            <h2>Temporada {{season.year}}</h2>
-            <p class="muted">Fase: {{season.phase}}</p>
-            <ul class="stat-list">
-                <li>Partidos jugados: {{season.matchesPlayed}}</li>
-                <li>Victorias: {{season.wins}}</li>
-                <li>Empates: {{season.draws}}</li>
-                <li>Derrotas: {{season.losses}}</li>
-                <li>Goles a favor: {{season.goalsFor}}</li>
-                <li>Goles en contra: {{season.goalsAgainst}}</li>
-                <li>Puntos: {{season.points}}</li>
-            </ul>
-        </div>
+
+        <aside class="dashboard-sidebar">
+
+            <section class="fixture-card">
+
+                <div class="fixture-header">
+
+                    <div>
+
+                        <h2>
+                            Últimas fechas
+                        </h2>
+
+                        <p class="fixture-subtitle">
+                            Fixture de {{year}}
+                        </p>
+
+                    </div>
+
+                    <a href="/career/fixture"
+                       class="fixture-full-link">
+                        Ver →
+                    </a>
+
+                </div>
+
+
+                <div class="recent-fixture-list">
+
+                    {{#recentFixture}}
+
+                    <div class="fixture-match {{resultClass}}">
+
+                        <div class="fixture-round">
+                            Fecha {{round}}
+                        </div>
+
+
+                        <div class="fixture-match-info">
+
+                            <div class="fixture-opponent">
+                                vs {{opponent}}
+                            </div>
+
+                            <div class="fixture-home-away">
+                                {{homeAway}}
+                            </div>
+
+                        </div>
+
+
+                        <div class="fixture-result">
+                            {{result}}
+                        </div>
+
+                    </div>
+
+                    {{/recentFixture}}
+
+                </div>
+
+            </section>
+
+        </aside>
+
         {{/season}}
+
     </section>
+
+
+    <!-- ================================
+         ACCIONES
+    ================================= -->
 
     {{#hasClub}}
+
     <section class="actions">
 
-        <form action="/career/season/advance" method="post">
-            <button class="btn btn-primary" type="submit">
+        <form action="/career/season/advance"
+              method="post">
+
+            <button class="btn btn-primary"
+                    type="submit">
+
                 [DEBUG] Avanzar fase
+
             </button>
+
         </form>
 
+
         {{#season}}
+
             {{#isRegularSeason}}
-            <form action="/career/season/finish" method="post">
-                <button class="btn btn-secondary" type="submit">
+
+            <form action="/career/season/finish"
+                  method="post">
+
+                <button class="btn btn-secondary"
+                        type="submit">
+
                     Finalizar temporada
+
                 </button>
+
             </form>
+
             {{/isRegularSeason}}
 
+
             {{#isSummary}}
-            <form action="/career/season/next" method="post">
-                <button class="btn btn-secondary" type="submit">
+
+            <form action="/career/season/next"
+                  method="post">
+
+                <button class="btn btn-secondary"
+                        type="submit">
+
                     Nueva temporada
+
                 </button>
+
             </form>
+
             {{/isSummary}}
+
         {{/season}}
 
     </section>
+
     {{/hasClub}}
+
 </main>
+
 {{/dashboard}}
+
 </body>
 </html>

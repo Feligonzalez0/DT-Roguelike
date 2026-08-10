@@ -24,7 +24,7 @@ class CareerEngineTest {
         return new CareerEngine(
                 seasonSimulator,
                 new ReputationEngine(),
-                new ProgressionEngine()
+                new ProgressionEngine(), null, null
         );
     }
 

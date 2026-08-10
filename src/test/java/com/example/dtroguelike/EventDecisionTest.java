@@ -26,7 +26,7 @@ class EventDecisionTest {
         Manager manager = new Manager("DT", 40, "Argentina", ManagerStyle.MANAGER);
         MatchSimulator matchSimulator = new MatchSimulator(new Random(1));
         SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator, new Random(1));
-        CareerEngine engine = new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine());
+        CareerEngine engine = new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine(), null, null);
         Career career = engine.startCareer(manager);
         Club club = new Club("club", "Club", "Argentina", "Liga", 50, new TeamStrength(60, 60, 60));
         engine.assignClub(career, club);

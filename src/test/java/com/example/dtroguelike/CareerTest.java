@@ -25,7 +25,7 @@ class CareerTest {
     private CareerEngine buildCareerEngine() {
         MatchSimulator matchSimulator = new MatchSimulator(new Random(42));
         SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator, new Random(42));
-        return new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine());
+        return new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine(), null, null);
     }
 
     private Club buildClub(String id, int reputation) {

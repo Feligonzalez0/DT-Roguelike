@@ -6,8 +6,6 @@ import java.util.UUID;
 
 /**
  * Representa un partido de futbol dentro de una temporada.
- * La simulacion en si vive en el engine (MatchSimulator); esta clase
- * solo modela los datos.
  */
 public class Match {
 
@@ -16,15 +14,24 @@ public class Match {
     private final Club awayTeam;
     private final MatchCompetition competition;
     private final MatchImportance importance;
+    private final int round;
+
     private MatchState state;
     private MatchResult result;
 
-    public Match(Club homeTeam, Club awayTeam, MatchCompetition competition, MatchImportance importance) {
+    public Match(
+            Club homeTeam,
+            Club awayTeam,
+            MatchCompetition competition,
+            MatchImportance importance,
+            int round) {
+
         this.id = UUID.randomUUID().toString();
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.competition = competition;
         this.importance = importance;
+        this.round = round;
         this.state = MatchState.NOT_STARTED;
     }
 
@@ -46,6 +53,10 @@ public class Match {
 
     public MatchImportance getImportance() {
         return importance;
+    }
+
+    public int getRound() {
+        return round;
     }
 
     public MatchState getState() {

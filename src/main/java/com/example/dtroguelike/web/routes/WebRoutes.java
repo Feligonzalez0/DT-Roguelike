@@ -3,6 +3,7 @@ package com.example.dtroguelike.web.routes;
 import com.example.dtroguelike.config.AppContext;
 import com.example.dtroguelike.web.controllers.CareerController;
 import com.example.dtroguelike.web.controllers.ClubController;
+import com.example.dtroguelike.web.controllers.FixtureController;
 import com.example.dtroguelike.web.controllers.HomeController;
 import com.example.dtroguelike.web.controllers.ManagerController;
 import spark.ModelAndView;
@@ -25,6 +26,7 @@ public class WebRoutes {
     private final ManagerController managerController;
     private final ClubController clubController;
     private final CareerController careerController;
+    private final FixtureController fixtureController;
     private final MustacheTemplateEngine templateEngine = new MustacheTemplateEngine();
 
     public WebRoutes(AppContext appContext) {
@@ -32,6 +34,7 @@ public class WebRoutes {
         this.managerController = new ManagerController(appContext.getManagerService(), appContext.getCareerService());
         this.clubController = new ClubController(appContext.getCareerService());
         this.careerController = new CareerController(appContext.getCareerService(), appContext.getSeasonService());
+        this.fixtureController = new FixtureController(appContext.getCareerService());
     }
 
     public void register() {
@@ -59,6 +62,8 @@ public class WebRoutes {
         });
 
         get("/career/dashboard", (req, res) -> render(careerController.showDashboard(), "dashboard.mustache"));
+        
+        get("/career/fixture", (req, res) -> render(fixtureController.showFixture(), "fixture.mustache"));
 
         post("/career/season/advance", (req, res) -> {
             careerController.advancePhase();

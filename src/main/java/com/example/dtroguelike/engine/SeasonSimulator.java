@@ -17,6 +17,7 @@ import java.util.Random;
  * fixture completo de liga; simplemente permite avanzar la temporada
  * simulando partidos individuales contra rivales elegidos al azar.
  */
+@SuppressWarnings("unused")
 public class SeasonSimulator {
 
     private final MatchSimulator matchSimulator;
@@ -41,25 +42,4 @@ public class SeasonSimulator {
      * TODO: reemplazar por un fixture real de liga (ida y vuelta contra
      * todos los equipos) en una iteracion futura.
      */
-    public MatchResult simulateNextStep(Career career, List<Club> possibleRivals) {
-        Season season = career.getCurrentSeason();
-        Club home = career.getCurrentClub();
-
-        if (season == null || home == null || possibleRivals == null || possibleRivals.isEmpty()) {
-            return null;
-        }
-
-        if (season.getPhase() != SeasonPhase.REGULAR_SEASON) {
-            return null;
-        }
-
-        Club rival = possibleRivals.get(random.nextInt(possibleRivals.size()));
-        Match match = new Match(home, rival, MatchCompetition.LEAGUE, MatchImportance.NORMAL);
-        MatchResult result = matchSimulator.simulate(match, career);
-        match.setResult(result);
-        season.addMatch(match);
-        season.getStats().registerMatch(result.getHomeGoals(), result.getAwayGoals());
-
-        return result;
-    }
 }
