@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tabla de posiciones</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-950 text-white min-h-screen">
+
+<div class="max-w-6xl mx-auto px-6 py-8">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+
+        <div>
+            <p class="text-sm text-gray-400 uppercase tracking-wider">
+                Temporada {{standings.seasonYear}}
+            </p>
+
+            <h1 class="text-3xl font-bold mt-1">
+                Tabla de posiciones
+            </h1>
+        </div>
+
+        <a
+            href="/career/dashboard"
+            class="px-4 py-2 rounded-lg bg-gray-800
+                   hover:bg-gray-700 transition">
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- Tabla -->
+    <div class="bg-gray-900 border border-gray-800
+                rounded-xl overflow-hidden shadow-xl">
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full text-sm">
+
+                <thead class="bg-gray-800 text-gray-400">
+
+                <tr>
+
+                    <th class="px-4 py-4 text-center w-16">
+                        #
+                    </th>
+
+                    <th class="px-4 py-4 text-left">
+                        Club
+                    </th>
+
+                    <th class="px-3 py-4 text-center">
+                        PJ
+                    </th>
+
+                    <th class="px-3 py-4 text-center">
+                        PG
+                    </th>
+
+                    <th class="px-3 py-4 text-center">
+                        PE
+                    </th>
+
+                    <th class="px-3 py-4 text-center">
+                        PP
+                    </th>
+
+                    <th class="px-3 py-4 text-center">
+                        GF
+                    </th>
+
+                    <th class="px-3 py-4 text-center">
+                        GC
+                    </th>
+
+                    <th class="px-3 py-4 text-center">
+                        DG
+                    </th>
+
+                    <th class="px-4 py-4 text-center font-bold">
+                        PTS
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody class="divide-y divide-gray-800">
+
+                {{#standings.entries}}
+
+                <tr class="hover:bg-gray-800/60 transition">
+
+                    <!-- Posición -->
+                    <td class="px-4 py-4 text-center
+                               text-gray-400 font-medium">
+                        {{position}}
+                    </td>
+
+
+                    <!-- Club -->
+                    <td class="px-4 py-4">
+
+                        <span class="font-semibold">
+                            {{clubName}}
+                        </span>
+
+                    </td>
+
+
+                    <!-- PJ -->
+                    <td class="px-3 py-4 text-center">
+                        {{played}}
+                    </td>
+
+
+                    <!-- PG -->
+                    <td class="px-3 py-4 text-center">
+                        {{wins}}
+                    </td>
+
+
+                    <!-- PE -->
+                    <td class="px-3 py-4 text-center">
+                        {{draws}}
+                    </td>
+
+
+                    <!-- PP -->
+                    <td class="px-3 py-4 text-center">
+                        {{losses}}
+                    </td>
+
+
+                    <!-- GF -->
+                    <td class="px-3 py-4 text-center">
+                        {{goalsFor}}
+                    </td>
+
+
+                    <!-- GC -->
+                    <td class="px-3 py-4 text-center">
+                        {{goalsAgainst}}
+                    </td>
+
+
+                    <!-- DG -->
+                    <td class="px-3 py-4 text-center font-medium">
+
+                        {{goalDifference}}
+
+                    </td>
+
+
+                    <!-- Puntos -->
+                    <td class="px-4 py-4 text-center">
+
+                        <span class="font-bold text-lg">
+                            {{points}}
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {{/standings.entries}}
+
+
+                {{^standings.entries}}
+
+                <tr>
+
+                    <td
+                        colspan="10"
+                        class="px-6 py-12 text-center text-gray-500"
+                    >
+                        No hay datos disponibles para la tabla.
+                    </td>
+
+                </tr>
+
+                {{/standings.entries}}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- Referencia -->
+    <div class="mt-4 text-xs text-gray-500">
+
+        <span>PJ</span> = Partidos jugados ·
+        <span>PG</span> = Ganados ·
+        <span>PE</span> = Empatados ·
+        <span>PP</span> = Perdidos ·
+        <span>GF</span> = Goles a favor ·
+        <span>GC</span> = Goles en contra ·
+        <span>DG</span> = Diferencia de gol ·
+        <span>PTS</span> = Puntos
+
+    </div>
+
+</div>
+
+</body>
+</html>

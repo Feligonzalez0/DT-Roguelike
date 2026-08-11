@@ -1,5 +1,7 @@
 package com.example.dtroguelike.web.viewmodels;
 
+import java.util.List;
+
 import com.example.dtroguelike.domain.career.Career;
 
 /**
@@ -14,7 +16,8 @@ public class DashboardViewModel {
     public final String careerState;
     public final String gamePhase;
     public final boolean hasClub;
-
+    public final List<StandingsEntryViewModel> nearbyStandings;
+    
     public DashboardViewModel(Career career) {
         this.manager = new ManagerViewModel(career.getManager());
         this.hasClub = career.getCurrentClub() != null;
@@ -22,5 +25,15 @@ public class DashboardViewModel {
         this.season = career.getCurrentSeason() != null ? new SeasonViewModel(career.getCurrentSeason(), career.getCurrentClub()) : null;
         this.careerState = career.getState().name();
         this.gamePhase = career.getPhase().name();
+        
+        //Table preview
+        if (career.getCurrentSeason() != null && career.getCurrentClub() != null 
+            && career.getCurrentSeason().getStandings() != null){
+            StandingsViewModel standings = new StandingsViewModel(career.getCurrentSeason());
+            this.nearbyStandings = standings.getNearbyEntries(career.getCurrentClub().getId());
+        } else {
+            this.nearbyStandings = List.of();
+        }
+
     }
 }

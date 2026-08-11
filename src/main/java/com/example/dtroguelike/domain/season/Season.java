@@ -1,6 +1,7 @@
 package com.example.dtroguelike.domain.season;
 
 import com.example.dtroguelike.domain.match.Match;
+import com.example.dtroguelike.domain.standings.StandingsTable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,7 @@ public class Season {
     private final SeasonStats stats;
     private List<List<Match>> fixture = new ArrayList<>();
     private int currentRound;
+    private StandingsTable standings;
 
     public Season(int year) {
         this.year = year;
@@ -92,4 +94,12 @@ public class Season {
         }
     }
 
+    // TABLA DE POSICIONES
+    public StandingsTable getStandings() {
+        return standings;
+    }
+
+    public void setStandings(StandingsTable standings) {
+        this.standings = standings;
+    }
 }

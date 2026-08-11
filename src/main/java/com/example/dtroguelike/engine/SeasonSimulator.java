@@ -102,6 +102,11 @@ public class SeasonSimulator {
              */
             match.setResult(result);
 
+            season.getStandings().registerMatch(
+                match.getHomeTeam(),match.getAwayTeam(),
+                result.getHomeGoals(),result.getAwayGoals()
+        );
+
             /*
              * Por ahora solamente actualizamos las estadísticas
              * de la temporada del club dirigido.
@@ -110,7 +115,6 @@ public class SeasonSimulator {
              * todos los partidos de la fecha.
              */
             if (isManagedClubMatch(match, managedClub)) {
-
                 registerResultInSeasonStats(
                         season,
                         managedClub,
@@ -138,7 +142,6 @@ public class SeasonSimulator {
                 season.getFixture();
 
         for (List<Match> round : fixture) {
-
             boolean hasPendingMatch =
                     round.stream()
                             .anyMatch(match ->

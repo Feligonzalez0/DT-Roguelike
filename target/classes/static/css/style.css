@@ -396,6 +396,9 @@ body {
 
 .dashboard-sidebar {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 
@@ -707,4 +710,58 @@ body {
         grid-column: auto;
     }
 
+}
+
+/* =================================
+   STANDINGS PREVIEW
+================================= */
+
+.standings-preview {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+}
+
+.standing-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 10px;
+
+    padding: 9px 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.standing-row:last-child {
+    border-bottom: none;
+}
+
+.standing-position {
+    color: #888;
+    font-size: 13px;
+    text-align: center;
+}
+
+.standing-club {
+    font-size: 14px;
+    font-weight: 500;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.standing-points {
+    font-size: 13px;
+    font-weight: 600;
+    color: #aaa;
+}
+
+.standings-empty {
+    padding: 20px 0;
+
+    color: #777;
+    font-size: 14px;
+    text-align: center;
 }

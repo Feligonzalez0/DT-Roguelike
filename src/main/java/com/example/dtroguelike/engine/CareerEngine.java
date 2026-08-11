@@ -12,6 +12,7 @@ import com.example.dtroguelike.domain.manager.Manager;
 import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.season.Season;
 import com.example.dtroguelike.domain.season.SeasonPhase;
+import com.example.dtroguelike.domain.standings.StandingsTable;
 
 /**
  * Orquestador principal de una carrera. Delega el trabajo especifico a
@@ -65,9 +66,12 @@ public class CareerEngine {
 
         List<Club> leagueClubs = clubsOfManagedLeague(career);
         List<List<Match>> fixture = fixtureGenerator.generate(leagueClubs, year);
-
         season.setFixture(fixture);
         
+        StandingsTable standings =
+        new StandingsTable(leagueClubs);
+        season.setStandings(standings);
+
         career.setCurrentSeason(season);
         career.getManager().getStats().incrementSeasonsManaged();
         career.setPhase(GamePhase.PRESEASON);

@@ -6,6 +6,7 @@ import com.example.dtroguelike.web.controllers.ClubController;
 import com.example.dtroguelike.web.controllers.FixtureController;
 import com.example.dtroguelike.web.controllers.HomeController;
 import com.example.dtroguelike.web.controllers.ManagerController;
+import com.example.dtroguelike.web.controllers.StandingsController;
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
 
@@ -27,14 +28,16 @@ public class WebRoutes {
     private final ClubController clubController;
     private final CareerController careerController;
     private final FixtureController fixtureController;
+    private final StandingsController standingsController;
     private final MustacheTemplateEngine templateEngine = new MustacheTemplateEngine();
-
+    
     public WebRoutes(AppContext appContext) {
         this.homeController = new HomeController();
         this.managerController = new ManagerController(appContext.getManagerService(), appContext.getCareerService());
         this.clubController = new ClubController(appContext.getCareerService());
         this.careerController = new CareerController(appContext.getCareerService(), appContext.getSeasonService());
         this.fixtureController = new FixtureController(appContext.getCareerService());
+        this.standingsController = new StandingsController(appContext.getCareerService());
     }
 
     public void register() {
@@ -64,6 +67,8 @@ public class WebRoutes {
         get("/career/dashboard", (req, res) -> render(careerController.showDashboard(), "dashboard.mustache"));
         
         get("/career/fixture", (req, res) -> render(fixtureController.showFixture(), "fixture.mustache"));
+
+        get("/career/standings", (req, res) -> render(standingsController.showStandings(), "standings.mustache"));
 
         post("/career/match/simulate", (req, res) -> {
             careerController.simulateNextMatch();

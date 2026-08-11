@@ -271,12 +271,80 @@
 
 
         <!-- ================================
-             SIDEBAR — FIXTURE
+            SIDEBAR — STANDINGS + FIXTURE
         ================================= -->
 
         {{#season}}
 
         <aside class="dashboard-sidebar">
+
+            <!-- ================================
+                TABLA DE POSICIONES
+            ================================= -->
+
+            <section class="fixture-card">
+
+                <div class="fixture-header">
+
+                    <div>
+
+                        <h2>
+                            Tabla de posiciones
+                        </h2>
+
+                        <p class="fixture-subtitle">
+                            Temporada {{season.year}}
+                        </p>
+
+                    </div>
+
+                    <a href="/career/standings"
+                    class="fixture-full-link">
+                        Ver →
+                    </a>
+
+                </div>
+
+
+                <div class="standings-preview">
+
+                    {{#nearbyStandings}}
+
+                    <div class="standing-row">
+
+                        <div class="standing-position">
+                            {{position}}
+                        </div>
+
+                        <div class="standing-club">
+                            {{clubName}}
+                        </div>
+
+                        <div class="standing-points">
+                            {{points}} pts
+                        </div>
+
+                    </div>
+
+                    {{/nearbyStandings}}
+
+
+                    {{^nearbyStandings}}
+
+                    <div class="standings-empty">
+                        No hay posiciones disponibles.
+                    </div>
+
+                    {{/nearbyStandings}}
+
+                </div>
+
+            </section>
+
+
+            <!-- ================================
+                FIXTURE
+            ================================= -->
 
             <section class="fixture-card">
 
@@ -289,13 +357,13 @@
                         </h2>
 
                         <p class="fixture-subtitle">
-                            Fixture de {{year}}
+                            Fixture de {{season.year}}
                         </p>
 
                     </div>
 
                     <a href="/career/fixture"
-                       class="fixture-full-link">
+                    class="fixture-full-link">
                         Ver →
                     </a>
 
@@ -304,7 +372,7 @@
 
                 <div class="recent-fixture-list">
 
-                    {{#recentFixture}}
+                    {{#season.recentFixture}}
 
                     <div class="fixture-match {{resultClass}}">
 
@@ -332,7 +400,7 @@
 
                     </div>
 
-                    {{/recentFixture}}
+                    {{/season.recentFixture}}
 
                 </div>
 
@@ -341,7 +409,6 @@
         </aside>
 
         {{/season}}
-
     </section>
 
 
