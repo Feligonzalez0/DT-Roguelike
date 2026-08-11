@@ -1,6 +1,5 @@
 package com.example.dtroguelike.web.viewmodels;
 
-import java.util.Comparator;
 import java.util.List;
 
 import com.example.dtroguelike.domain.club.Club;
@@ -55,14 +54,23 @@ public class SeasonViewModel {
         }
         String clubId = managedClub.getId();
 
-        List<Match> clubMatches =
-                season.getMatches().stream().filter(match -> match.getHomeTeam().getId().equals(clubId) || 
-                match.getAwayTeam().getId().equals(clubId))
-                .sorted(Comparator.comparing(Match::getRound)).toList();
-        // Dashboard: solamente las últimas 5 fechas.
-        int fromIndex = Math.max(0, clubMatches.size() - 5);
+        List<List<Match>> fixture = season.getFixture();
 
-        this.recentFixture = clubMatches.subList(fromIndex, clubMatches.size()).stream()
-            .map(match -> new FixtureMatchViewModel(match,clubId)).toList();
+        int playedRounds = season.getCurrentRound();
+
+        int fromRound = Math.max(0, playedRounds - 5);
+        int toRound = Math.max(playedRounds, 5);
+
+        this.recentFixture = fixture.subList(fromRound, toRound)
+                .stream()
+                .flatMap(List::stream)
+                .filter(match ->
+                        match.getHomeTeam().getId().equals(clubId)
+                        || match.getAwayTeam().getId().equals(clubId)
+                )
+                .map(match ->
+                        new FixtureMatchViewModel(match, clubId)
+                )
+                .toList();
     }
 }

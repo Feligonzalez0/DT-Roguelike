@@ -62,8 +62,8 @@ public class SeasonService {
      * Simula el proximo partido pendiente del club dirigido dentro de la
      * temporada regular actual y persiste el resultado.
      */
-    public Match simulateNextMatch(Career career) {
-        Match match = seasonSimulator.simulateNextMatch(career);
+    public List<Match> simulateNextMatch(Career career) {
+        List<Match> match = seasonSimulator.simulateNextMatch(career);
         careerRepository.save(career);
         return match;
     }

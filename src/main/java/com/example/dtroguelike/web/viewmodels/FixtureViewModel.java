@@ -5,9 +5,7 @@ import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.season.Season;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FixtureViewModel {
 
@@ -24,32 +22,43 @@ public class FixtureViewModel {
 
         String clubId = managedClub.getId();
 
-        List<Match>clubMatches = season.getMatches().stream().filter(match->match.getHomeTeam().getId().equals(clubId) ||
-                                match.getAwayTeam().getId().equals(clubId))
-                                .sorted(Comparator.comparing(Match::getRound)).toList();
+        List<List<Match>> fixture =
+                season.getFixture();
 
-        this.rounds =
-                clubMatches.stream()
-                        .collect(
-                                Collectors.groupingBy(
-                                        Match::getRound))
-                        .entrySet()
-                        .stream()
-                        .sorted(
-                                Comparator.comparing(
-                                        entry -> entry.getKey()))
-                        .map(entry ->
-                                new FixtureRoundViewModel(
-                                        entry.getKey(),
-                                        entry.getValue()
-                                                .stream()
-                                                .map(match ->
-                                                        new FixtureMatchViewModel(
-                                                                match,
-                                                                clubId))
-                                                .toList()
-                                )
+        this.rounds = new ArrayList<>();
+
+        for (int i = 0; i < fixture.size(); i++) {
+
+            int roundNumber = i + 1;
+
+            List<FixtureMatchViewModel> roundMatches =
+                    fixture.get(i)
+                            .stream()
+                            .filter(match ->
+                                    match.getHomeTeam()
+                                            .getId()
+                                            .equals(clubId)
+                                    ||
+                                    match.getAwayTeam()
+                                            .getId()
+                                            .equals(clubId)
+                            )
+                            .map(match ->
+                                    new FixtureMatchViewModel(
+                                            match,
+                                            clubId
+                                    )
+                            )
+                            .toList();
+
+            if (!roundMatches.isEmpty()) {
+                this.rounds.add(
+                        new FixtureRoundViewModel(
+                                roundNumber,
+                                roundMatches
                         )
-                        .collect(Collectors.toList());
+                );
+            }
+        }
     }
 }

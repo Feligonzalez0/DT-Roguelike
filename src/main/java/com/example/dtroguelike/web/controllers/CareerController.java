@@ -6,6 +6,7 @@ import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.web.viewmodels.DashboardViewModel;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -54,7 +55,7 @@ public class CareerController {
     }    
 
     /** Simula el proximo partido pendiente del club dirigido (solo durante REGULAR_SEASON). */
-    public Match simulateNextMatch() {
+    public List<Match> simulateNextMatch() {
         Career career = requireCurrentCareer();
         return seasonService.simulateNextMatch(career);
     }

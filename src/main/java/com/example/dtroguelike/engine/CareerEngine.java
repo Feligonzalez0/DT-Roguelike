@@ -64,9 +64,9 @@ public class CareerEngine {
         Season season = new Season(year);
 
         List<Club> leagueClubs = clubsOfManagedLeague(career);
-        List<Match> fixture = fixtureGenerator.generate(leagueClubs, year);
+        List<List<Match>> fixture = fixtureGenerator.generate(leagueClubs, year);
 
-        season.addMatches(fixture);
+        season.setFixture(fixture);
         
         career.setCurrentSeason(season);
         career.getManager().getStats().incrementSeasonsManaged();

@@ -3,11 +3,7 @@ package com.example.dtroguelike.web.controllers;
 import com.example.dtroguelike.application.CareerService;
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.season.Season;
-import com.example.dtroguelike.engine.CareerEngine;
 import com.example.dtroguelike.web.viewmodels.FixtureViewModel;
-import spark.ModelAndView;
-import spark.Request;
-import spark.Response;
 
 import java.util.HashMap;
 import java.util.Map;

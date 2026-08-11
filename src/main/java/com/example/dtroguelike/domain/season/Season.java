@@ -14,12 +14,14 @@ public class Season {
     private final int year;
     private SeasonPhase phase;
     private final SeasonStats stats;
-    private final List<Match> matches = new ArrayList<>();
+    private List<List<Match>> fixture = new ArrayList<>();
+    private int currentRound;
 
     public Season(int year) {
         this.year = year;
         this.phase = SeasonPhase.PRESEASON;
         this.stats = new SeasonStats();
+        this.currentRound = 0;
     }
 
     public int getYear() {
@@ -33,16 +35,20 @@ public class Season {
         return stats;
     }
 
-    public List<Match> getMatches() {
-        return Collections.unmodifiableList(matches);
+    public List<List<Match>> getFixture() {
+        return Collections.unmodifiableList(fixture);
     }
 
-    public void addMatch(Match match) {
-        matches.add(match);
+    public void setFixture(List<List<Match>> fixture) {
+        this.fixture = fixture;
     }
 
-    public void addMatches(List<Match> matches){
-        this.matches.addAll(matches);
+    public int getCurrentRound(){
+        return this.currentRound;
+    }
+
+    public void addRound(List<Match> matches) {
+        fixture.add(matches);
     }
     
     /*
@@ -71,6 +77,10 @@ public class Season {
     public void showSummary() {
         requirePhase(SeasonPhase.END_OF_SEASON);
         phase = SeasonPhase.SUMMARY;
+    }
+
+    public void incrementCurrentRound(){
+        this.currentRound++;
     }
 
     //Chequeo que la fase requerida coincida.

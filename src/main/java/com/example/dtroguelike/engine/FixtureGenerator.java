@@ -5,7 +5,6 @@ import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.match.MatchCompetition;
 import com.example.dtroguelike.domain.match.MatchImportance;
 
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,10 +24,23 @@ import java.util.Random;
  * - El fixture cambia entre temporadas.
  * - El fixture de una misma temporada es reproducible.
  * - Se intenta evitar rachas largas de localía o visitante.
+ *
+ * La estructura resultante es:
+ *
+ * List<List<Match>>
+ *
+ * donde:
+ *
+ * fixture.get(0) -> Fecha 1
+ * fixture.get(1) -> Fecha 2
+ * fixture.get(2) -> Fecha 3
+ * ...
  */
 public class FixtureGenerator {
+
     /**
-     * Genera todos los partidos de una temporada.
+     * Genera todos los partidos de una temporada,
+     * agrupados por fecha.
      *
      * El año se utiliza como seed del generador aleatorio.
      *
@@ -48,20 +60,24 @@ public class FixtureGenerator {
      *
      * @param clubs clubes participantes de la liga
      * @param seasonYear año de la temporada
-     * @return lista completa de partidos ordenados por fecha
+     * @return lista de fechas, conteniendo los partidos de cada fecha
      */
-    public List<Match> generate(List<Club> clubs, int seasonYear) {
+    public List<List<Match>> generate(
+            List<Club> clubs,
+            int seasonYear) {
+
         if (clubs == null || clubs.size() < 2) {
             throw new IllegalArgumentException(
                     "Una liga necesita al menos 2 clubes."
             );
         }
 
-        //Usamos el año como seed.
+        // Usamos el año como seed.
         Random random = new Random(seasonYear);
 
-        //Copiamos la lista para no modificar la lista original.
+        // Copiamos la lista para no modificar la lista original.
         List<Club> teams = new ArrayList<>(clubs);
+
         Collections.shuffle(teams, random);
 
         /*
@@ -75,37 +91,64 @@ public class FixtureGenerator {
         int teamCount = teams.size();
         int roundsPerLeg = teamCount - 1;
 
-        List<Match> fixture = new ArrayList<>();
-        Map<String, Boolean> lastHome = new HashMap<>(); // Se utiliza para evitar rachas largas como local/visitante.
+        /*
+         * El fixture ahora está agrupado por fecha.
+         *
+         * fixture.get(0) -> Fecha 1
+         * fixture.get(1) -> Fecha 2
+         * etc.
+         */
+        List<List<Match>> fixture = new ArrayList<>();
 
+        /*
+         * Se utiliza para evitar rachas largas como
+         * local/local/local o visitante/visitante/visitante.
+         */
+        Map<String, Boolean> lastHome = new HashMap<>();
+
+        // =========================================================
         // PRIMERA RUEDA
+        // =========================================================
+
         for (int round = 1; round <= roundsPerLeg; round++) {
 
-            fixture.addAll(
+            List<Match> roundMatches =
                     generateRound(
                             teams,
                             round,
                             false,
                             lastHome,
                             random
-                    )
-            );
+                    );
+
+            /*
+             * Agregamos la fecha completa como un elemento
+             * dentro del fixture.
+             */
+            fixture.add(roundMatches);
 
             rotateTeams(teams);
         }
-        
+
+        // =========================================================
         // SEGUNDA RUEDA
+        // =========================================================
+
         for (int round = 1; round <= roundsPerLeg; round++) {
 
-            fixture.addAll(
+            List<Match> roundMatches =
                     generateRound(
                             teams,
                             roundsPerLeg + round,
                             true,
                             lastHome,
                             random
-                    )
-            );
+                    );
+
+            /*
+             * Agregamos la fecha completa.
+             */
+            fixture.add(roundMatches);
 
             rotateTeams(teams);
         }
@@ -115,6 +158,9 @@ public class FixtureGenerator {
 
     /**
      * Genera una fecha completa.
+     *
+     * Todos los partidos devueltos por este método
+     * pertenecen a la misma fecha.
      */
     private List<Match> generateRound(
             List<Club> teams,
@@ -130,6 +176,7 @@ public class FixtureGenerator {
         for (int i = 0; i < half; i++) {
 
             Club first = teams.get(i);
+
             Club second = teams.get(
                     teams.size() - 1 - i
             );
@@ -171,6 +218,7 @@ public class FixtureGenerator {
              * En la segunda rueda se invierte la localía.
              */
             if (reverseHomeAway) {
+
                 Club temp = home;
                 home = away;
                 away = temp;
@@ -202,6 +250,7 @@ public class FixtureGenerator {
                             && Boolean.TRUE.equals(awayWasHome));
 
             if (shouldSwap) {
+
                 Club temp = home;
                 home = away;
                 away = temp;
@@ -216,6 +265,9 @@ public class FixtureGenerator {
 
             /*
              * Creamos el partido.
+             *
+             * El parámetro round sigue guardándose dentro de Match.
+             * Esto no cambia respecto al funcionamiento anterior.
              */
             Match match = new Match(
                     home,
