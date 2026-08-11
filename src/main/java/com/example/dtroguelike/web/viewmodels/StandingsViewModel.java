@@ -1,6 +1,8 @@
 package com.example.dtroguelike.web.viewmodels;
 
 import java.util.List;
+
+import com.example.dtroguelike.domain.club.Club;
 import com.example.dtroguelike.domain.season.Season;
 
 public class StandingsViewModel {
@@ -8,16 +10,19 @@ public class StandingsViewModel {
     public final int seasonYear;
     public final List<StandingsEntryViewModel> entries;
 
-    public StandingsViewModel(Season season) {
+    public StandingsViewModel(Season season, Club managedClub) {
 
         this.seasonYear = season.getYear();
 
-        this.entries =
-                season.getStandings()
-                        .getEntries()
-                        .stream()
-                        .map(StandingsEntryViewModel::new)
-                        .toList();
+        this.entries = season.getStandings().getEntries()
+        .stream()
+        .map(entry ->
+                new StandingsEntryViewModel(
+                        entry,
+                        managedClub.getId()
+                )
+        )
+        .toList();
     }
 
     public List<StandingsEntryViewModel> getNearbyEntries(String managedClubId) {

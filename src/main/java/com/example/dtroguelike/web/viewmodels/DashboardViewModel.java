@@ -17,7 +17,7 @@ public class DashboardViewModel {
     public final String gamePhase;
     public final boolean hasClub;
     public final List<StandingsEntryViewModel> nearbyStandings;
-    
+
     public DashboardViewModel(Career career) {
         this.manager = new ManagerViewModel(career.getManager());
         this.hasClub = career.getCurrentClub() != null;
@@ -29,7 +29,7 @@ public class DashboardViewModel {
         //Table preview
         if (career.getCurrentSeason() != null && career.getCurrentClub() != null 
             && career.getCurrentSeason().getStandings() != null){
-            StandingsViewModel standings = new StandingsViewModel(career.getCurrentSeason());
+            StandingsViewModel standings = new StandingsViewModel(career.getCurrentSeason(), career.getCurrentClub());
             this.nearbyStandings = standings.getNearbyEntries(career.getCurrentClub().getId());
         } else {
             this.nearbyStandings = List.of();

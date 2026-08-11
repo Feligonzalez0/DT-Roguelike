@@ -551,6 +551,9 @@ body {
 .fixture-opponent {
     font-size: 0.85rem;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .fixture-home-away {
@@ -724,11 +727,11 @@ body {
 
 .standing-row {
     display: grid;
-    grid-template-columns: 28px 1fr auto;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
     align-items: center;
     gap: 10px;
 
-    padding: 9px 0;
+    padding: 9px 8px;
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -764,4 +767,27 @@ body {
     color: #777;
     font-size: 14px;
     text-align: center;
+}
+
+/* Club dirigido por el jugador */
+.managed-club {
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+}
+
+.managed-club .standing-position,
+.managed-club .standing-points {
+    font-weight: 700;
+}
+
+.managed-club .standing-club {
+    font-weight: 700;
+}
+
+tr.managed-club {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+tr.managed-club td:first-child {
+    font-weight: 700;
 }

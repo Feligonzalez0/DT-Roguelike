@@ -45,7 +45,7 @@
 
                 <thead class="bg-gray-800 text-gray-400">
 
-                <tr>
+                <tr class="{{#isManagedClub}}managed-club{{/isManagedClub}}">
 
                     <th class="px-4 py-4 text-center w-16">
                         #
@@ -175,7 +175,7 @@
 
                 {{^standings.entries}}
 
-                <tr>
+                <tr class="{{#isManagedClub}}managed-club{{/isManagedClub}}">
 
                     <td
                         colspan="10"

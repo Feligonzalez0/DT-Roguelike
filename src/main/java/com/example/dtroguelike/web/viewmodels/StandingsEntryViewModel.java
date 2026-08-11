@@ -15,8 +15,9 @@ public class StandingsEntryViewModel {
     public final int goalDifference;
     public final int points;
     public final String clubId;
+    public final boolean isManagedClub;
 
-    public StandingsEntryViewModel(StandingsEntry entry){
+    public StandingsEntryViewModel(StandingsEntry entry, String managedClubId){
         this.position = entry.getPosition();
         this.clubName = entry.getClub().getName();
         this.played = entry.getPlayed();
@@ -28,6 +29,7 @@ public class StandingsEntryViewModel {
         this.goalDifference = entry.getGoalDifference();
         this.points = entry.getPoints();
         this.clubId = entry.getClub().getId();
+        this.isManagedClub = this.clubId.equals(managedClubId);
     }
 
     public String getClubId(){

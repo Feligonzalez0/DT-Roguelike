@@ -35,7 +35,7 @@ public class StandingsController {
         }
 
         StandingsViewModel viewModel =
-                new StandingsViewModel(season);
+                new StandingsViewModel(season, career.getCurrentClub());
 
         Map<String, Object> model =
                 new HashMap<>();
