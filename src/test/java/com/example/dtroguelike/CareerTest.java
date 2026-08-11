@@ -9,6 +9,7 @@ import com.example.dtroguelike.domain.manager.ManagerStyle;
 import com.example.dtroguelike.domain.offer.ClubOffer;
 import com.example.dtroguelike.engine.CareerEngine;
 import com.example.dtroguelike.engine.ClubOfferGenerator;
+import com.example.dtroguelike.engine.FixtureGenerator;
 import com.example.dtroguelike.engine.ProgressionEngine;
 import com.example.dtroguelike.engine.ReputationEngine;
 import com.example.dtroguelike.engine.SeasonSimulator;
@@ -25,7 +26,15 @@ class CareerTest {
     private CareerEngine buildCareerEngine() {
         MatchSimulator matchSimulator = new MatchSimulator(new Random(42));
         SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator, new Random(42));
-        return new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine(), null, null);
+        // FixtureGenerator.generate() necesita al menos 2 clubes de la misma
+        // liga para poder armar el fixture cuando se asigna un club (antes
+        // se pasaba null y assignClub->startSeason tiraba NPE).
+        List<Club> leagueClubs = List.of(
+                buildClub("river-plate", 90),
+                buildClub("rival-club", 55)
+        );
+        return new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine(),
+                new FixtureGenerator(), leagueClubs);
     }
 
     private Club buildClub(String id, int reputation) {
@@ -77,6 +86,9 @@ class CareerTest {
         Manager manager = new Manager("DT", 40, "Argentina", ManagerStyle.MANAGER);
         CareerEngine engine = buildCareerEngine();
         Career career = engine.startCareer(manager);
+        // startSeason() arma el fixture de la liga del club dirigido, asi
+        // que necesita un club ya asignado (igual que en el flujo real).
+        engine.assignClub(career, buildClub("boca-juniors", 80));
 
         engine.startSeason(career, 2026);
 

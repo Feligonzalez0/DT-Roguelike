@@ -57,6 +57,23 @@ public final class GameConstants {
     public static final int MIN_INITIAL_OFFERS = 3;
     public static final int MAX_INITIAL_OFFERS = 5;
 
+    // --- Simulacion de partidos (MatchSimulator) ---
+    // Goles esperados "base" para un equipo sin diferencia de fuerza contra su rival.
+    public static final double MATCH_BASE_EXPECTED_GOALS = 1.3;
+    // Cota inferior/superior de goles esperados (lambda de Poisson) por equipo,
+    // para evitar partidos irrealmente aburridos o goleadas absurdas.
+    public static final double MATCH_MIN_EXPECTED_GOALS = 0.2;
+    public static final double MATCH_MAX_EXPECTED_GOALS = 3.5;
+    // Cuanto pesa la diferencia de fuerza (TeamStrength.overall()) entre ambos
+    // equipos a la hora de calcular los goles esperados de cada uno.
+    public static final double MATCH_STRENGTH_DIFF_DIVISOR = 40.0;
+    // Ventaja de localia aplicada como multiplicador sobre la fuerza del local.
+    public static final double MATCH_HOME_ADVANTAGE_MULTIPLIER = 1.1;
+    // Tope absoluto de goles por equipo en un partido (red de seguridad ante
+    // resultados extremos; con la distribucion de Poisson usada es muy raro
+    // acercarse a este numero).
+    public static final int MATCH_MAX_GOALS = 8;
+
     /**
      * Aplica un "clamp" generico entre un minimo y un maximo.
      */

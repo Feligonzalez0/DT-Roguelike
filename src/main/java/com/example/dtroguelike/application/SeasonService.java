@@ -2,6 +2,7 @@ package com.example.dtroguelike.application;
 
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.club.Club;
+import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.match.MatchResult;
 import com.example.dtroguelike.engine.CareerEngine;
 import com.example.dtroguelike.engine.SeasonSimulator;
@@ -55,5 +56,15 @@ public class SeasonService {
     public void startNextSeason(Career career) {
         careerEngine.startNextSeason(career);
         careerRepository.save(career);
+    }
+
+    /**
+     * Simula el proximo partido pendiente del club dirigido dentro de la
+     * temporada regular actual y persiste el resultado.
+     */
+    public Match simulateNextMatch(Career career) {
+        Match match = seasonSimulator.simulateNextMatch(career);
+        careerRepository.save(career);
+        return match;
     }
 }

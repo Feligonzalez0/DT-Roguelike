@@ -3,6 +3,7 @@ package com.example.dtroguelike.web.controllers;
 import com.example.dtroguelike.application.CareerService;
 import com.example.dtroguelike.application.SeasonService;
 import com.example.dtroguelike.domain.career.Career;
+import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.web.viewmodels.DashboardViewModel;
 
 import java.util.Map;
@@ -51,6 +52,12 @@ public class CareerController {
         }
         return career;
     }    
+
+    /** Simula el proximo partido pendiente del club dirigido (solo durante REGULAR_SEASON). */
+    public Match simulateNextMatch() {
+        Career career = requireCurrentCareer();
+        return seasonService.simulateNextMatch(career);
+    }
 
     private Career requireCurrentCareer() {
         Optional<Career> career = careerService.getCurrentCareer();

@@ -65,6 +65,12 @@ public class WebRoutes {
         
         get("/career/fixture", (req, res) -> render(fixtureController.showFixture(), "fixture.mustache"));
 
+        post("/career/match/simulate", (req, res) -> {
+            careerController.simulateNextMatch();
+            res.redirect("/career/dashboard");
+            return null;
+        });
+
         post("/career/season/advance", (req, res) -> {
             careerController.advancePhase();
             res.redirect("/career/dashboard");

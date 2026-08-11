@@ -9,7 +9,6 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 
-import java.lang.ScopedValue.Carrier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

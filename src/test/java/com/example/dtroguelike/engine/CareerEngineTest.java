@@ -10,11 +10,27 @@ import com.example.dtroguelike.domain.season.SeasonPhase;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CareerEngineTest {
+
+    // FixtureGenerator.generate() necesita al menos 2 clubes de la misma
+    // liga; lo dejamos fijo en la lista de clubes de la liga usada por
+    // buildCareerEngine()/buildClub() para poder llamar a assignClub sin
+    // romper (antes se pasaba null y assignClub->startSeason tiraba NPE).
+    private Club buildRivalClub() {
+        return new Club(
+                "rival-club",
+                "Rival Club",
+                "Argentina",
+                "Liga",
+                55,
+                new TeamStrength(55, 55, 55)
+        );
+    }
 
     private CareerEngine buildCareerEngine() {
         MatchSimulator matchSimulator = new MatchSimulator(new Random(42));
@@ -24,7 +40,9 @@ class CareerEngineTest {
         return new CareerEngine(
                 seasonSimulator,
                 new ReputationEngine(),
-                new ProgressionEngine(), null, null
+                new ProgressionEngine(),
+                new FixtureGenerator(),
+                List.of(buildClub(), buildRivalClub())
         );
     }
 

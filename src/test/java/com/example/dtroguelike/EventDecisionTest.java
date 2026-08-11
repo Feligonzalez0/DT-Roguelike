@@ -9,6 +9,7 @@ import com.example.dtroguelike.domain.manager.ManagerStyle;
 import com.example.dtroguelike.engine.CareerEngine;
 import com.example.dtroguelike.engine.DecisionResolver;
 import com.example.dtroguelike.engine.DecisionResult;
+import com.example.dtroguelike.engine.FixtureGenerator;
 import com.example.dtroguelike.engine.MatchSimulator;
 import com.example.dtroguelike.engine.ProgressionEngine;
 import com.example.dtroguelike.engine.ReputationEngine;
@@ -26,9 +27,14 @@ class EventDecisionTest {
         Manager manager = new Manager("DT", 40, "Argentina", ManagerStyle.MANAGER);
         MatchSimulator matchSimulator = new MatchSimulator(new Random(1));
         SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator, new Random(1));
-        CareerEngine engine = new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine(), null, null);
-        Career career = engine.startCareer(manager);
         Club club = new Club("club", "Club", "Argentina", "Liga", 50, new TeamStrength(60, 60, 60));
+        Club rival = new Club("rival", "Rival", "Argentina", "Liga", 50, new TeamStrength(55, 55, 55));
+        // FixtureGenerator.generate() necesita al menos 2 clubes de la misma
+        // liga para poder armar el fixture al asignar el club (antes se
+        // pasaba null y assignClub->startSeason tiraba NPE).
+        CareerEngine engine = new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine(),
+                new FixtureGenerator(), List.of(club, rival));
+        Career career = engine.startCareer(manager);
         engine.assignClub(career, club);
         return career;
     }
