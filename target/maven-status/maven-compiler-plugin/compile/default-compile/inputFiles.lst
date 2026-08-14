@@ -42,6 +42,8 @@ D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtrogueli
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\domain\season\Season.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\domain\season\SeasonPhase.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\domain\season\SeasonStats.java
+D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\domain\standings\StandingsEntry.java
+D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\domain\standings\StandingsTable.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\engine\CareerEngine.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\engine\ClubOfferGenerator.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\engine\DecisionResolver.java
@@ -71,6 +73,7 @@ D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtrogueli
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\controllers\FixtureController.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\controllers\HomeController.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\controllers\ManagerController.java
+D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\controllers\StandingsController.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\routes\WebRoutes.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\viewmodels\ClubOfferViewModel.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\viewmodels\ClubViewModel.java
@@ -80,3 +83,5 @@ D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtrogueli
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\viewmodels\FixtureViewModel.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\viewmodels\ManagerViewModel.java
 D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\viewmodels\SeasonViewModel.java
+D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\viewmodels\StandingsEntryViewModel.java
+D:\Feli\Programación\Programas\DT-Roguelike\src\main\java\com\example\dtroguelike\web\viewmodels\StandingsViewModel.java

@@ -84,15 +84,28 @@ public class CareerEngine {
         career.setPhase(GamePhase.TRANSFER_WINDOW);
     }
 
-    /** TRANSFER_WINDOW -> REGULAR_SEASON. */
+    /**
+     * TRANSFER_WINDOW -> REGULAR_SEASON.
+     *
+     * Al entrar a REGULAR_SEASON se simula automaticamente la primera
+     * mitad del fixture de la temporada (ver {@link SeasonSimulator#simulateFirstHalf(Career)}).
+     * La segunda mitad queda pendiente hasta {@link #finishSeason(Career)}.
+     */
     public void startRegularSeason(Career career) {
         requireSeasonPhase(career, SeasonPhase.TRANSFER_WINDOW);
         career.getCurrentSeason().startRegularSeason();
         career.setPhase(GamePhase.REGULAR_SEASON);
+
+        seasonSimulator.simulateFirstHalf(career);
     }
 
     /**
      * Cierra la temporada: REGULAR_SEASON -> END_OF_SEASON.
+     *
+     * Antes de cerrar la temporada se simula la segunda mitad del
+     * fixture (ver {@link SeasonSimulator#simulateSecondHalf(Career)}),
+     * de manera que todos los partidos de la temporada queden
+     * {@code FINISHED} antes de aplicar las consecuencias del cierre.
      */
     public void finishSeason(Career career) {
         requireSeasonPhase(career, SeasonPhase.REGULAR_SEASON);
@@ -101,6 +114,8 @@ public class CareerEngine {
         if (season == null) {
             throw new IllegalStateException("No hay una temporada activa.");
         }
+
+        seasonSimulator.simulateSecondHalf(career);
 
         reputationEngine.updateAfterSeason(career);
         reputationEngine.adjustJobSecurity(career.getCurrentClubState());

@@ -1,0 +1,677 @@
+diff --git a/src/main/java/com/example/dtroguelike/domain/season/Season.java b/src/main/java/com/example/dtroguelike/domain/season/Season.java
+index 89d74a2..95dbeb4 100644
+--- a/src/main/java/com/example/dtroguelike/domain/season/Season.java
++++ b/src/main/java/com/example/dtroguelike/domain/season/Season.java
+@@ -85,6 +85,10 @@ public class Season {
+         this.currentRound++;
+     }
+ 
++    public void setCurrentRound(int currentRound) {
++        this.currentRound = currentRound;
++    }
++
+     //Chequeo que la fase requerida coincida.
+     private void requirePhase(SeasonPhase expected) {
+         if (phase != expected) {
+diff --git a/src/main/java/com/example/dtroguelike/engine/CareerEngine.java b/src/main/java/com/example/dtroguelike/engine/CareerEngine.java
+index 8811d75..24685f9 100644
+--- a/src/main/java/com/example/dtroguelike/engine/CareerEngine.java
++++ b/src/main/java/com/example/dtroguelike/engine/CareerEngine.java
+@@ -84,15 +84,28 @@ public class CareerEngine {
+         career.setPhase(GamePhase.TRANSFER_WINDOW);
+     }
+ 
+-    /** TRANSFER_WINDOW -> REGULAR_SEASON. */
++    /**
++     * TRANSFER_WINDOW -> REGULAR_SEASON.
++     *
++     * Al entrar a REGULAR_SEASON se simula automaticamente la primera
++     * mitad del fixture de la temporada (ver {@link SeasonSimulator#simulateFirstHalf(Career)}).
++     * La segunda mitad queda pendiente hasta {@link #finishSeason(Career)}.
++     */
+     public void startRegularSeason(Career career) {
+         requireSeasonPhase(career, SeasonPhase.TRANSFER_WINDOW);
+         career.getCurrentSeason().startRegularSeason();
+         career.setPhase(GamePhase.REGULAR_SEASON);
++
++        seasonSimulator.simulateFirstHalf(career);
+     }
+ 
+     /**
+      * Cierra la temporada: REGULAR_SEASON -> END_OF_SEASON.
++     *
++     * Antes de cerrar la temporada se simula la segunda mitad del
++     * fixture (ver {@link SeasonSimulator#simulateSecondHalf(Career)}),
++     * de manera que todos los partidos de la temporada queden
++     * {@code FINISHED} antes de aplicar las consecuencias del cierre.
+      */
+     public void finishSeason(Career career) {
+         requireSeasonPhase(career, SeasonPhase.REGULAR_SEASON);
+@@ -102,6 +115,8 @@ public class CareerEngine {
+             throw new IllegalStateException("No hay una temporada activa.");
+         }
+ 
++        seasonSimulator.simulateSecondHalf(career);
++
+         reputationEngine.updateAfterSeason(career);
+         reputationEngine.adjustJobSecurity(career.getCurrentClubState());
+         progressionEngine.applyManagerGrowth(career);
+diff --git a/src/main/java/com/example/dtroguelike/engine/SeasonSimulator.java b/src/main/java/com/example/dtroguelike/engine/SeasonSimulator.java
+index f29adc6..ec7d1e5 100644
+--- a/src/main/java/com/example/dtroguelike/engine/SeasonSimulator.java
++++ b/src/main/java/com/example/dtroguelike/engine/SeasonSimulator.java
+@@ -8,19 +8,28 @@ import com.example.dtroguelike.domain.match.MatchState;
+ import com.example.dtroguelike.domain.season.Season;
+ import com.example.dtroguelike.domain.season.SeasonPhase;
+ 
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
+ 
+ /**
+- * Simulador simplificado de temporada.
++ * Simulador de temporada, basado exclusivamente en el fixture real de
++ * la {@link Season} ({@code season.getFixture()} agrupado por fecha).
+  *
+- * Para este MVP permite avanzar la temporada fecha por fecha.
++ * La temporada regular se juega en dos mitades:
+  *
+- * Al simular una fecha se simulan TODOS los partidos de esa fecha,
+- * no solamente el partido del club dirigido.
++ * - {@link #simulateFirstHalf(Career)} simula las primeras fechas del
++ *   fixture (aproximadamente la mitad) al entrar a REGULAR_SEASON.
++ * - {@link #simulateSecondHalf(Career)} simula el resto de las fechas
++ *   cuando se finaliza la temporada.
+  *
+- * Esto permite preparar el sistema para implementar posteriormente
+- * la tabla de posiciones de la liga.
++ * Ambos metodos son idempotentes respecto de partidos ya jugados: un
++ * {@link Match} en estado {@link MatchState#FINISHED} nunca vuelve a
++ * simularse, evitando duplicar puntos, goles o partidos jugados.
++ *
++ * {@link #simulateNextMatch(Career)} se mantiene para el boton de debug
++ * que permite simular fecha por fecha; internamente reutiliza el mismo
++ * mecanismo de simulacion que las mitades.
+  */
+ public class SeasonSimulator {
+ 
+@@ -40,22 +49,66 @@ public class SeasonSimulator {
+     }
+ 
+     /**
+-     * Simula la próxima fecha pendiente de la temporada.
++     * Simula la primera mitad del fixture de la temporada regular.
+      *
+-     * La fecha se obtiene del fixture agrupado:
++     * La temporada se divide utilizando la cantidad de fechas del
++     * fixture ({@code totalRounds / 2}): las primeras fechas
++     * corresponden a la primera mitad y el resto a la segunda.
+      *
+-     * List<List<Match>>
++     * Los partidos ya {@link MatchState#FINISHED} se ignoran, por lo
++     * que puede llamarse de forma segura mas de una vez.
+      *
+-     * donde cada elemento representa una fecha.
++     * @return los partidos efectivamente simulados en esta llamada.
++     */
++    public List<Match> simulateFirstHalf(Career career) {
++
++        Season season = requireRegularSeason(career);
++        Club managedClub = requireManagedClub(career);
++
++        int totalRounds = season.getFixture().size();
++        int midpoint = firstHalfMidpoint(totalRounds);
++
++        return simulateRoundRange(career, season, managedClub, 0, midpoint);
++    }
++
++    /**
++     * Simula la segunda mitad del fixture de la temporada regular
++     * (todas las fechas restantes desde el punto medio).
+      *
+-     * Todos los partidos de la fecha son simulados, incluyendo
+-     * aquellos en los que no participa el club dirigido.
++     * Igual que {@link #simulateFirstHalf(Career)}, es idempotente
++     * respecto de partidos ya jugados.
+      *
+-     * Las estadísticas de SeasonStats se actualizan solamente
+-     * desde la perspectiva del club dirigido.
++     * @return los partidos efectivamente simulados en esta llamada.
++     */
++    public List<Match> simulateSecondHalf(Career career) {
++
++        Season season = requireRegularSeason(career);
++        Club managedClub = requireManagedClub(career);
++
++        int totalRounds = season.getFixture().size();
++        int midpoint = firstHalfMidpoint(totalRounds);
++
++        return simulateRoundRange(career, season, managedClub, midpoint, totalRounds);
++    }
++
++    /**
++     * Calcula el punto medio de la temporada en base a la cantidad
++     * total de fechas. La unidad logica de division es la fecha
++     * (no la cantidad total de partidos), para no separar partidos
++     * de una misma fecha entre las dos mitades.
++     */
++    private int firstHalfMidpoint(int totalRounds) {
++        return totalRounds / 2;
++    }
++
++    /**
++     * Simula la proxima fecha pendiente de la temporada.
+      *
+-     * En el futuro, la actualización de la tabla de posiciones
+-     * utilizará todos los resultados de la fecha.
++     * Se mantiene para el boton de debug ({@code /career/season/advance}
++     * y {@code /career/match/simulate}), que permite probar la
++     * simulacion fecha por fecha. Reutiliza el mismo mecanismo que
++     * {@link #simulateFirstHalf(Career)} y {@link #simulateSecondHalf(Career)},
++     * por lo que no introduce una tercera forma de simular partidos.
+      *
+      * @return lista de partidos simulados de la fecha.
+      *
+@@ -68,93 +121,136 @@ public class SeasonSimulator {
+         Season season = requireRegularSeason(career);
+         Club managedClub = requireManagedClub(career);
+ 
+-        /*
+-         * Obtiene la primera fecha que todavía tiene
+-         * partidos sin jugar.
+-         */
+-        List<Match> nextRound =
+-                findNextPendingRound(season);
++        int nextRoundIndex = findNextPendingRoundIndex(season);
+ 
+-        if (nextRound == null) {
++        if (nextRoundIndex == -1) {
+             throw new IllegalStateException(
+                     "No hay más fechas pendientes para simular en esta temporada."
+             );
+         }
+ 
+-        /*
+-         * Simulamos TODOS los partidos de la fecha.
+-         */
+-        for (Match match : nextRound) {
++        return simulateRoundRange(
++                career, season, managedClub, nextRoundIndex, nextRoundIndex + 1
++        );
++    }
+ 
+-            if (match.getState() != MatchState.NOT_STARTED) {
+-                continue;
+-            }
++    /**
++     * Simula todas las fechas del fixture entre {@code fromIndex}
++     * (inclusive) y {@code toIndex} (exclusive), saltando los partidos
++     * que ya estan {@link MatchState#FINISHED}.
++     *
++     * Actualiza, para cada partido nuevo simulado: el resultado del
++     * {@link Match}, la tabla de posiciones de la temporada y, si el
++     * partido corresponde al club dirigido, las {@code SeasonStats} de
++     * la temporada (incluyendo la posicion en la tabla).
++     */
++    private List<Match> simulateRoundRange(
++            Career career,
++            Season season,
++            Club managedClub,
++            int fromIndex,
++            int toIndex) {
+ 
+-            MatchResult result =
+-                    matchSimulator.simulate(
+-                            match,
+-                            career
+-                    );
++        List<Match> simulated = new ArrayList<>();
++        List<List<Match>> fixture = season.getFixture();
+ 
+-            /*
+-             * El resultado deja automáticamente el Match
+-             * en FINISHED.
+-             */
+-            match.setResult(result);
++        for (int i = fromIndex; i < toIndex; i++) {
+ 
+-            season.getStandings().registerMatch(
+-                match.getHomeTeam(),match.getAwayTeam(),
+-                result.getHomeGoals(),result.getAwayGoals()
+-        );
++            List<Match> round = fixture.get(i);
++
++            for (Match match : round) {
+ 
+-            /*
+-             * Por ahora solamente actualizamos las estadísticas
+-             * de la temporada del club dirigido.
+-             *
+-             * La futura tabla de posiciones deberá procesar
+-             * todos los partidos de la fecha.
+-             */
+-            if (isManagedClubMatch(match, managedClub)) {
+-                registerResultInSeasonStats(
+-                        season,
+-                        managedClub,
+-                        match,
+-                        result
++                if (match.getState() != MatchState.NOT_STARTED) {
++                    // Partido ya jugado: nunca se vuelve a simular.
++                    continue;
++                }
++
++                MatchResult result = matchSimulator.simulate(match, career);
++
++                /*
++                 * El resultado deja automáticamente el Match en
++                 * FINISHED.
++                 */
++                match.setResult(result);
++
++                season.getStandings().registerMatch(
++                        match.getHomeTeam(), match.getAwayTeam(),
++                        result.getHomeGoals(), result.getAwayGoals()
+                 );
++
++                if (isManagedClubMatch(match, managedClub)) {
++                    registerResultInSeasonStats(
++                            season, managedClub, match, result
++                    );
++                }
++
++                simulated.add(match);
+             }
+         }
+ 
+-        /*
+-         * Una fecha completa fue simulada.
+-         */
+-        season.incrementCurrentRound();
++        syncCurrentRound(season);
++        syncManagedClubLeaguePosition(season, managedClub);
+ 
+-        return nextRound;
++        return simulated;
+     }
+ 
+     /**
+-     * Busca la primera fecha del fixture que todavía contiene
+-     * al menos un partido NOT_STARTED.
++     * Recalcula {@code Season.currentRound} en base a la cantidad de
++     * fechas totalmente finalizadas al comienzo del fixture. El fixture
++     * se juega en orden, por lo que la primera fecha con partidos
++     * pendientes marca el limite del progreso actual.
+      */
+-    private List<Match> findNextPendingRound(Season season) {
++    private void syncCurrentRound(Season season) {
++
++        int finishedRounds = 0;
++
++        for (List<Match> round : season.getFixture()) {
++
++            boolean allFinished = round.stream()
++                    .allMatch(match -> match.getState() == MatchState.FINISHED);
++
++            if (!allFinished) {
++                break;
++            }
++
++            finishedRounds++;
++        }
++
++        season.setCurrentRound(finishedRounds);
++    }
++
++    /**
++     * Actualiza SeasonStats.leaguePosition con la posicion actual del
++     * club dirigido en la tabla de posiciones.
++     */
++    private void syncManagedClubLeaguePosition(Season season, Club managedClub) {
++
++        season.getStats().setLeaguePosition(
++                season.getStandings()
++                        .getEntry(managedClub.getId())
++                        .getPosition()
++        );
++    }
++
++    /**
++     * Busca el indice (dentro del fixture) de la primera fecha que
++     * todavia contiene al menos un partido NOT_STARTED.
++     */
++    private int findNextPendingRoundIndex(Season season) {
++
++        List<List<Match>> fixture = season.getFixture();
+ 
+-        List<List<Match>> fixture =
+-                season.getFixture();
++        for (int i = 0; i < fixture.size(); i++) {
+ 
+-        for (List<Match> round : fixture) {
+-            boolean hasPendingMatch =
+-                    round.stream()
+-                            .anyMatch(match ->
+-                                    match.getState()
+-                                            == MatchState.NOT_STARTED
+-                            );
++            boolean hasPendingMatch = fixture.get(i).stream()
++                    .anyMatch(match -> match.getState() == MatchState.NOT_STARTED);
+ 
+             if (hasPendingMatch) {
+-                return round;
++                return i;
+             }
+         }
+ 
+-        return null;
++        return -1;
+     }
+ 
+     /**
+@@ -255,4 +351,4 @@ public class SeasonSimulator {
+ 
+         return club;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/src/test/java/com/example/dtroguelike/engine/SeasonSimulatorHalvesTest.java b/src/test/java/com/example/dtroguelike/engine/SeasonSimulatorHalvesTest.java
+new file mode 100644
+index 0000000..57deecf
+--- /dev/null
++++ b/src/test/java/com/example/dtroguelike/engine/SeasonSimulatorHalvesTest.java
+@@ -0,0 +1,293 @@
++package com.example.dtroguelike.engine;
++
++import com.example.dtroguelike.domain.career.Career;
++import com.example.dtroguelike.domain.club.Club;
++import com.example.dtroguelike.domain.club.TeamStrength;
++import com.example.dtroguelike.domain.common.GamePhase;
++import com.example.dtroguelike.domain.manager.Manager;
++import com.example.dtroguelike.domain.manager.ManagerStyle;
++import com.example.dtroguelike.domain.match.Match;
++import com.example.dtroguelike.domain.match.MatchState;
++import com.example.dtroguelike.domain.season.Season;
++import com.example.dtroguelike.domain.season.SeasonPhase;
++import com.example.dtroguelike.domain.standings.StandingsEntry;
++
++import org.junit.jupiter.api.Test;
++
++import java.util.List;
++import java.util.Random;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++/**
++ * Verifica el issue 3: la temporada regular se juega en dos mitades,
++ * simuladas automaticamente al entrar a REGULAR_SEASON y al finalizar
++ * la temporada, sin duplicar partidos, puntos ni goles.
++ */
++class SeasonSimulatorHalvesTest {
++
++    /**
++     * Liga de 6 clubes -> round robin ida y vuelta de 10 fechas
++     * (5 por rueda), lo que da un punto medio (10 / 2 = 5) claro para
++     * testear la division en mitades.
++     */
++    private List<Club> buildLeagueClubs() {
++        return List.of(
++                buildClub("club-1", 60),
++                buildClub("club-2", 58),
++                buildClub("club-3", 55),
++                buildClub("club-4", 62),
++                buildClub("club-5", 57),
++                buildClub("club-6", 59)
++        );
++    }
++
++    private Club buildClub(String id, int strength) {
++        return new Club(
++                id, id + " FC", "Argentina", "Liga",
++                strength, new TeamStrength(strength, strength, strength)
++        );
++    }
++
++    private static class Harness {
++        final CareerEngine engine;
++        final SeasonSimulator seasonSimulator;
++        final Career career;
++
++        Harness(CareerEngine engine, SeasonSimulator seasonSimulator, Career career) {
++            this.engine = engine;
++            this.seasonSimulator = seasonSimulator;
++            this.career = career;
++        }
++    }
++
++    private Harness buildHarness() {
++        List<Club> leagueClubs = buildLeagueClubs();
++
++        MatchSimulator matchSimulator = new MatchSimulator(new Random(123));
++        SeasonSimulator seasonSimulator =
++                new SeasonSimulator(matchSimulator, new Random(123));
++
++        CareerEngine engine = new CareerEngine(
++                seasonSimulator,
++                new ReputationEngine(),
++                new ProgressionEngine(),
++                new FixtureGenerator(),
++                leagueClubs
++        );
++
++        Manager manager = new Manager("DT Test", 40, "Argentina", ManagerStyle.MANAGER);
++        Career career = engine.startCareer(manager);
++        engine.assignClub(career, leagueClubs.get(0));
++
++        return new Harness(engine, seasonSimulator, career);
++    }
++
++    private int countFinished(List<Match> round) {
++        return (int) round.stream()
++                .filter(m -> m.getState() == MatchState.FINISHED)
++                .count();
++    }
++
++    private int countNotStarted(List<Match> round) {
++        return (int) round.stream()
++                .filter(m -> m.getState() == MatchState.NOT_STARTED)
++                .count();
++    }
++
++    @Test
++    void entrarARegularSeasonSimulaSoloLaPrimeraMitad() {
++        Harness h = buildHarness();
++
++        h.engine.startTransferWindow(h.career);
++        h.engine.startRegularSeason(h.career);
++
++        Season season = h.career.getCurrentSeason();
++        List<List<Match>> fixture = season.getFixture();
++
++        int totalRounds = fixture.size();
++        int midpoint = totalRounds / 2;
++
++        assertEquals(10, totalRounds, "la liga de 6 clubes debe generar 10 fechas");
++        assertEquals(5, midpoint);
++
++        for (int i = 0; i < midpoint; i++) {
++            List<Match> round = fixture.get(i);
++            assertEquals(
++                    round.size(), countFinished(round),
++                    "todos los partidos de la primera mitad deben estar FINISHED (fecha " + (i + 1) + ")"
++            );
++        }
++
++        for (int i = midpoint; i < totalRounds; i++) {
++            List<Match> round = fixture.get(i);
++            assertEquals(
++                    round.size(), countNotStarted(round),
++                    "todos los partidos de la segunda mitad deben seguir NOT_STARTED (fecha " + (i + 1) + ")"
++            );
++        }
++
++        assertEquals(SeasonPhase.REGULAR_SEASON, season.getPhase());
++        assertEquals(GamePhase.REGULAR_SEASON, h.career.getPhase());
++    }
++
++    @Test
++    void tablaDespuesDePrimeraMitadReflejaSoloLosPartidosJugados() {
++        Harness h = buildHarness();
++
++        h.engine.startTransferWindow(h.career);
++        h.engine.startRegularSeason(h.career);
++
++        Season season = h.career.getCurrentSeason();
++        Club managedClub = h.career.getCurrentClub();
++
++        StandingsEntry entry = season.getStandings().getEntry(managedClub.getId());
++
++        // El club dirigido jugo exactamente una fecha por cada una de
++        // las 5 fechas de la primera mitad.
++        assertEquals(5, entry.getPlayed());
++
++        // Las SeasonStats (perspectiva del club dirigido) deben
++        // coincidir con la tabla.
++        assertEquals(entry.getPlayed(), season.getStats().getMatchesPlayed());
++        assertEquals(entry.getWins(), season.getStats().getWins());
++        assertEquals(entry.getDraws(), season.getStats().getDraws());
++        assertEquals(entry.getLosses(), season.getStats().getLosses());
++        assertEquals(entry.getGoalsFor(), season.getStats().getGoalsFor());
++        assertEquals(entry.getGoalsAgainst(), season.getStats().getGoalsAgainst());
++        assertEquals(entry.getPoints(), season.getStats().getPoints());
++
++        // Todos los clubes de la liga jugaron la misma cantidad de
++        // partidos (una fecha completa se simula entera).
++        for (StandingsEntry other : season.getStandings().getEntries()) {
++            assertEquals(5, other.getPlayed());
++        }
++    }
++
++    @Test
++    void finalizarTemporadaSimulaTodosLosPartidosRestantes() {
++        Harness h = buildHarness();
++
++        h.engine.startTransferWindow(h.career);
++        h.engine.startRegularSeason(h.career);
++        h.engine.finishSeason(h.career);
++
++        Season season = h.career.getCurrentSeason();
++        List<List<Match>> fixture = season.getFixture();
++
++        for (List<Match> round : fixture) {
++            for (Match match : round) {
++                assertEquals(MatchState.FINISHED, match.getState());
++            }
++        }
++
++        Club managedClub = h.career.getCurrentClub();
++        StandingsEntry entry = season.getStandings().getEntry(managedClub.getId());
++
++        int totalRounds = fixture.size();
++
++        assertEquals(totalRounds, entry.getPlayed());
++        assertEquals(totalRounds, season.getStats().getMatchesPlayed());
++
++        for (StandingsEntry other : season.getStandings().getEntries()) {
++            assertEquals(totalRounds, other.getPlayed());
++        }
++
++        assertEquals(SeasonPhase.END_OF_SEASON, season.getPhase());
++        assertEquals(GamePhase.END_OF_SEASON, h.career.getPhase());
++    }
++
++    @Test
++    void noSeDuplicanPartidosPuntosNiGolesAlReSimularLaPrimeraMitad() {
++        Harness h = buildHarness();
++
++        h.engine.startTransferWindow(h.career);
++        h.engine.startRegularSeason(h.career);
++
++        Season season = h.career.getCurrentSeason();
++        Club managedClub = h.career.getCurrentClub();
++
++        int matchesPlayedBefore = season.getStats().getMatchesPlayed();
++        int pointsBefore = season.getStats().getPoints();
++        int goalsForBefore = season.getStats().getGoalsFor();
++        int goalsAgainstBefore = season.getStats().getGoalsAgainst();
++        int standingsPlayedBefore =
++                season.getStandings().getEntry(managedClub.getId()).getPlayed();
++
++        // Volvemos a pedir la simulacion de la primera mitad: como los
++        // partidos ya estan FINISHED, no debe pasar nada.
++        List<Match> simuladosDeNuevo = h.seasonSimulator.simulateFirstHalf(h.career);
++
++        assertTrue(
++                simuladosDeNuevo.isEmpty(),
++                "no deberian simularse partidos nuevos, ya estan todos FINISHED"
++        );
++
++        assertEquals(matchesPlayedBefore, season.getStats().getMatchesPlayed());
++        assertEquals(pointsBefore, season.getStats().getPoints());
++        assertEquals(goalsForBefore, season.getStats().getGoalsFor());
++        assertEquals(goalsAgainstBefore, season.getStats().getGoalsAgainst());
++        assertEquals(
++                standingsPlayedBefore,
++                season.getStandings().getEntry(managedClub.getId()).getPlayed()
++        );
++    }
++
++    @Test
++    void noSeDuplicanPartidosPuntosNiGolesAlReSimularLaSegundaMitad() {
++        Harness h = buildHarness();
++
++        h.engine.startTransferWindow(h.career);
++        h.engine.startRegularSeason(h.career);
++
++        // Simulamos la segunda mitad "a mano" (todavia en REGULAR_SEASON,
++        // igual que hace finishSeason() internamente) dos veces seguidas.
++        List<Match> primeraLlamada = h.seasonSimulator.simulateSecondHalf(h.career);
++        assertFalse(primeraLlamada.isEmpty());
++
++        Season season = h.career.getCurrentSeason();
++        Club managedClub = h.career.getCurrentClub();
++
++        int matchesPlayedBefore = season.getStats().getMatchesPlayed();
++        int pointsBefore = season.getStats().getPoints();
++        int goalsForBefore = season.getStats().getGoalsFor();
++        int goalsAgainstBefore = season.getStats().getGoalsAgainst();
++
++        List<Match> segundaLlamada = h.seasonSimulator.simulateSecondHalf(h.career);
++
++        assertTrue(
++                segundaLlamada.isEmpty(),
++                "la segunda mitad ya esta jugada, no debe volver a simularse"
++        );
++
++        assertEquals(matchesPlayedBefore, season.getStats().getMatchesPlayed());
++        assertEquals(pointsBefore, season.getStats().getPoints());
++        assertEquals(goalsForBefore, season.getStats().getGoalsFor());
++        assertEquals(goalsAgainstBefore, season.getStats().getGoalsAgainst());
++
++        int totalRounds = season.getFixture().size();
++        assertEquals(
++                totalRounds,
++                season.getStandings().getEntry(managedClub.getId()).getPlayed()
++        );
++    }
++
++    @Test
++    void ciclCompletoConSimulacionDeMitadesRespetaTransicionesDeFase() {
++        Harness h = buildHarness();
++
++        assertEquals(SeasonPhase.PRESEASON, h.career.getCurrentSeason().getPhase());
++
++        h.engine.startTransferWindow(h.career);
++        assertEquals(SeasonPhase.TRANSFER_WINDOW, h.career.getCurrentSeason().getPhase());
++
++        h.engine.startRegularSeason(h.career);
++        assertEquals(SeasonPhase.REGULAR_SEASON, h.career.getCurrentSeason().getPhase());
++
++        h.engine.finishSeason(h.career);
++        assertEquals(SeasonPhase.END_OF_SEASON, h.career.getCurrentSeason().getPhase());
++
++        h.engine.showSeasonSummary(h.career);
++        assertEquals(SeasonPhase.SUMMARY, h.career.getCurrentSeason().getPhase());
++    }
++}

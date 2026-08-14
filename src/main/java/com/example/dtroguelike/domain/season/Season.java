@@ -85,6 +85,10 @@ public class Season {
         this.currentRound++;
     }
 
+    public void setCurrentRound(int currentRound) {
+        this.currentRound = currentRound;
+    }
+
     //Chequeo que la fase requerida coincida.
     private void requirePhase(SeasonPhase expected) {
         if (phase != expected) {
