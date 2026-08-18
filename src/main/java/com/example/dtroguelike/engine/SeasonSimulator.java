@@ -10,7 +10,6 @@ import com.example.dtroguelike.domain.season.SeasonPhase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Simulador de temporada, basado exclusivamente en el fixture real de
@@ -34,18 +33,11 @@ import java.util.Random;
 public class SeasonSimulator {
 
     private final MatchSimulator matchSimulator;
-    private final Random random;
-
-    public SeasonSimulator(MatchSimulator matchSimulator) {
-        this(matchSimulator, new Random());
-    }
 
     public SeasonSimulator(
-            MatchSimulator matchSimulator,
-            Random random) {
+            MatchSimulator matchSimulator) {
 
         this.matchSimulator = matchSimulator;
-        this.random = random;
     }
 
     /**

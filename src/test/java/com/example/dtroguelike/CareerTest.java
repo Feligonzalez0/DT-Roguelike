@@ -25,7 +25,7 @@ class CareerTest {
 
     private CareerEngine buildCareerEngine() {
         MatchSimulator matchSimulator = new MatchSimulator(new Random(42));
-        SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator, new Random(42));
+        SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator);
         // FixtureGenerator.generate() necesita al menos 2 clubes de la misma
         // liga para poder armar el fixture cuando se asigna un club (antes
         // se pasaba null y assignClub->startSeason tiraba NPE).

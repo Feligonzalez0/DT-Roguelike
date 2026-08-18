@@ -33,9 +33,9 @@ class CareerEngineTest {
     }
 
     private CareerEngine buildCareerEngine() {
-        MatchSimulator matchSimulator = new MatchSimulator(new Random(42));
+        MatchSimulator matchSimulator = new MatchSimulator();
         SeasonSimulator seasonSimulator =
-                new SeasonSimulator(matchSimulator, new Random(42));
+                new SeasonSimulator(matchSimulator);
 
         return new CareerEngine(
                 seasonSimulator,

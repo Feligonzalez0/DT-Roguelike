@@ -15,8 +15,6 @@ import com.example.dtroguelike.domain.standings.StandingsEntry;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -64,9 +62,9 @@ class SeasonSimulatorHalvesTest {
     private Harness buildHarness() {
         List<Club> leagueClubs = buildLeagueClubs();
 
-        MatchSimulator matchSimulator = new MatchSimulator(new Random(123));
+        MatchSimulator matchSimulator = new MatchSimulator();
         SeasonSimulator seasonSimulator =
-                new SeasonSimulator(matchSimulator, new Random(123));
+                new SeasonSimulator(matchSimulator);
 
         CareerEngine engine = new CareerEngine(
                 seasonSimulator,

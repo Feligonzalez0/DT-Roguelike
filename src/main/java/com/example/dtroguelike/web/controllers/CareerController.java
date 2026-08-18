@@ -4,7 +4,9 @@ import com.example.dtroguelike.application.CareerService;
 import com.example.dtroguelike.application.SeasonService;
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.match.Match;
+import com.example.dtroguelike.domain.season.SeasonPhase;
 import com.example.dtroguelike.web.viewmodels.DashboardViewModel;
+import com.example.dtroguelike.web.viewmodels.SeasonSummaryViewModel;
 
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,23 @@ public class CareerController {
         return career;
     }
 
-    public Career advancePhase() {
+    /**
+     * Completa la transición del botón "Finalizar temporada":
+     * simula/cierra la temporada y deja al jugador directamente en SUMMARY.
+     */
+    public Career finishSeasonAndShowSummary() {
+        Career career = finishSeason();
+        seasonService.showSeasonSummary(career);
+        return career;
+    }
+
+    public Map<String, Object> showSeasonSummary() {
+        Career career = requireCurrentCareer();
+        SeasonSummaryViewModel viewModel = new SeasonSummaryViewModel(career);
+        return Map.of("summary", viewModel);
+    }
+
+    public PhaseAdvanceResult advancePhase() {
         Career career = requireCurrentCareer();
 
         switch (career.getCurrentSeason().getPhase()) {
@@ -51,7 +69,12 @@ public class CareerController {
                             "No se puede avanzar automáticamente desde la fase "
                                     + career.getCurrentSeason().getPhase());
         }
-        return career;
+
+        CareerDestination destination = career.getCurrentSeason().getPhase() == SeasonPhase.SUMMARY
+                    ? CareerDestination.SEASON_SUMMARY
+                    : CareerDestination.DASHBOARD;
+
+        return new PhaseAdvanceResult(career, destination);
     }    
 
     /** Simula el proximo partido pendiente del club dirigido (solo durante REGULAR_SEASON). */

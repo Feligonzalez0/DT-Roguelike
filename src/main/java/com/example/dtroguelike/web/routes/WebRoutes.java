@@ -6,6 +6,7 @@ import com.example.dtroguelike.web.controllers.ClubController;
 import com.example.dtroguelike.web.controllers.FixtureController;
 import com.example.dtroguelike.web.controllers.HomeController;
 import com.example.dtroguelike.web.controllers.ManagerController;
+import com.example.dtroguelike.web.controllers.PhaseAdvanceResult;
 import com.example.dtroguelike.web.controllers.StandingsController;
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
@@ -65,10 +66,9 @@ public class WebRoutes {
         });
 
         get("/career/dashboard", (req, res) -> render(careerController.showDashboard(), "dashboard.mustache"));
-        
         get("/career/fixture", (req, res) -> render(fixtureController.showFixture(), "fixture.mustache"));
-
         get("/career/standings", (req, res) -> render(standingsController.showStandings(), "standings.mustache"));
+        get("/career/summary", (req, res) -> render(careerController.showSeasonSummary(), "season-summary.mustache"));
 
         post("/career/match/simulate", (req, res) -> {
             careerController.simulateNextMatch();
@@ -77,8 +77,15 @@ public class WebRoutes {
         });
 
         post("/career/season/advance", (req, res) -> {
-            careerController.advancePhase();
-            res.redirect("/career/dashboard");
+            PhaseAdvanceResult result = careerController.advancePhase();
+
+            switch (result.destination()) {
+                case SEASON_SUMMARY ->
+                        res.redirect("/career/summary");
+                case DASHBOARD ->
+                        res.redirect("/career/dashboard");
+            }
+
             return null;
         });
 

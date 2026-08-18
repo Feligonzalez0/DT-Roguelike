@@ -26,7 +26,7 @@ class EventDecisionTest {
     private Career buildActiveCareer() {
         Manager manager = new Manager("DT", 40, "Argentina", ManagerStyle.MANAGER);
         MatchSimulator matchSimulator = new MatchSimulator(new Random(1));
-        SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator, new Random(1));
+        SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator);
         Club club = new Club("club", "Club", "Argentina", "Liga", 50, new TeamStrength(60, 60, 60));
         Club rival = new Club("rival", "Rival", "Argentina", "Liga", 50, new TeamStrength(55, 55, 55));
         // FixtureGenerator.generate() necesita al menos 2 clubes de la misma

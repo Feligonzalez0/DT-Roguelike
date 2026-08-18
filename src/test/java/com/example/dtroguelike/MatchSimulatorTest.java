@@ -43,7 +43,7 @@ class MatchSimulatorTest {
      */
     private Career buildCareerWithClub(Club managedClub, List<Club> leagueClubs, Random seasonRandom) {
         MatchSimulator matchSimulator = new MatchSimulator(seasonRandom);
-        SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator, seasonRandom);
+        SeasonSimulator seasonSimulator = new SeasonSimulator(matchSimulator);
         CareerEngine engine = new CareerEngine(
                 seasonSimulator, new ReputationEngine(), new ProgressionEngine(),
                 new FixtureGenerator(), leagueClubs);
