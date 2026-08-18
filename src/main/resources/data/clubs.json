@@ -64,10 +64,10 @@
     "name": "Belgrano",
     "country": "Argentina",
     "leagueId": "arg-liga-profesional",
-    "reputation": 60,
-    "attack": 58,
-    "midfield": 60,
-    "defense": 58
+    "reputation": 20,
+    "attack": 99,
+    "midfield": 99,
+    "defense": 99
   },
   {
     "id": "rosario-central",

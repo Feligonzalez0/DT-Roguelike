@@ -791,3 +791,409 @@ tr.managed-club {
 tr.managed-club td:first-child {
     font-weight: 700;
 }
+
+/* =========================================================
+   SEASON SUMMARY
+   ========================================================= */
+
+.season-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.season-summary-header h1 {
+    margin: 0 0 4px;
+    font-size: 2rem;
+}
+
+
+/* =========================================================
+   SEASON SUMMARY - HERO
+   ========================================================= */
+
+.season-summary-hero {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 24px;
+    margin-bottom: 16px;
+    text-align: center;
+
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .18);
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+/*
+ * Tratamiento especial para una temporada de campeonato.
+ * Mantiene el diseño original oscuro pero agrega
+ * detalles dorados y un glow sutil.
+ */
+.season-summary-hero.champion {
+    border-color: #d4af37;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212, 175, 55, 0.14),
+            rgba(26, 34, 51, 0.98) 55%
+        );
+
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, .18),
+        0 0 28px rgba(212, 175, 55, .14);
+}
+
+.season-summary-hero h2 {
+    margin: 12px 0 6px;
+    font-size: 1.5rem;
+}
+
+
+/* =========================================================
+   SEASON SUMMARY - FINAL POSITION
+   ========================================================= */
+
+.season-summary-position {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+    margin-top: 16px;
+}
+
+
+/*
+ * Elemento principal del hero:
+ *
+ * CAMPEÓN
+ * o
+ * 4°
+ * 8°
+ * etc.
+ */
+.summary-position-value {
+    display: block;
+
+    font-size: 5rem;
+    line-height: .95;
+
+    font-weight: 800;
+    letter-spacing: -0.04em;
+
+    color: var(--accent);
+}
+
+
+/*
+ * Campeón utiliza dorado.
+ */
+.season-summary-hero.champion .summary-position-value {
+    color: #d4af37;
+
+    text-shadow:
+        0 0 20px rgba(212, 175, 55, .2);
+
+    letter-spacing: 0;
+}
+
+
+.summary-position-label {
+    color: var(--muted);
+
+    font-size: .8rem;
+    font-weight: 700;
+
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+
+.season-summary-hero.champion .summary-position-label {
+    color: rgba(212, 175, 55, .78);
+}
+
+
+.season-summary-assessment {
+    max-width: 560px;
+    margin: 14px auto 0;
+
+    color: var(--muted);
+}
+
+
+/* =========================================================
+   SEASON SUMMARY - GENERIC CARDS
+   ========================================================= */
+
+.season-summary-card {
+    margin-bottom: 16px;
+}
+
+.summary-card-header {
+    margin-bottom: 16px;
+}
+
+.summary-card-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+
+/* =========================================================
+   SEASON SUMMARY - STATS
+   ========================================================= */
+
+.season-summary-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   SEASON SUMMARY - CONTINUE CAREER
+   ========================================================= */
+
+.season-summary-actions {
+    display: flex;
+    justify-content: center;
+
+    margin: 0 0 24px;
+}
+
+.season-summary-actions .btn {
+    min-width: 220px;
+}
+
+
+/* =========================================================
+   SEASON SUMMARY - STANDINGS
+   ========================================================= */
+
+.season-summary-standings {
+    margin: 0;
+}
+
+.season-summary-table-wrapper {
+    overflow-x: auto;
+}
+
+.season-summary-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 420px;
+}
+
+
+.season-summary-table th,
+.season-summary-table td {
+    padding: 11px 12px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+.season-summary-table th {
+    color: var(--muted);
+
+    font-size: .75rem;
+    letter-spacing: .05em;
+}
+
+
+.season-summary-table th:nth-child(2),
+.season-summary-table td:nth-child(2) {
+    text-align: left;
+}
+
+
+.season-summary-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/*
+ * Destacar el club dirigido.
+ */
+.season-summary-table tr.managed-club td {
+    font-weight: 700;
+}
+
+
+/*
+ * ========================================================
+ * TABLA COMPACTA
+ * ========================================================
+ *
+ * Por defecto:
+ *
+ * 1
+ * 2
+ * 3
+ * 4
+ * 5
+ *
+ * Si el club dirigido está fuera del top 5,
+ * también se muestra.
+ */
+
+.season-summary-table tbody tr:nth-child(n + 6):not(.managed-club) {
+    display: none;
+}
+
+
+/*
+ * ========================================================
+ * TABLA EXPANDIBLE
+ * ========================================================
+ *
+ * El checkbox es invisible y solamente sirve
+ * para controlar visualmente el CSS.
+ */
+
+.standings-toggle {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/*
+ * Cuando se activa el checkbox,
+ * mostramos todas las posiciones.
+ */
+
+.standings-toggle:checked
+~ .season-summary-table-wrapper
+.season-summary-table tbody tr {
+    display: table-row;
+}
+
+
+/* =========================================================
+   BOTÓN VER TABLA COMPLETA
+   ========================================================= */
+
+.standings-toggle-label {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 14px;
+    padding: 10px 14px;
+
+    border-top:
+        1px solid var(--border);
+
+    color: var(--accent);
+
+    font-size: .9rem;
+    font-weight: 700;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition: opacity .2s ease;
+}
+
+
+.standings-toggle-label:hover {
+    opacity: .85;
+}
+
+
+/*
+ * Estado inicial.
+ */
+
+.standings-toggle-less {
+    display: none;
+}
+
+
+/*
+ * Estado expandido.
+ */
+
+.standings-toggle:checked
+~ .standings-toggle-label
+.standings-toggle-more {
+    display: none;
+}
+
+
+.standings-toggle:checked
+~ .standings-toggle-label
+.standings-toggle-less {
+    display: inline;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.summary-empty {
+    margin: 0;
+
+    padding: 12px 0;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .season-summary-header {
+        flex-direction: column;
+    }
+
+    .season-summary-header .phase-badge {
+        align-self: flex-start;
+    }
+
+    .season-summary-hero {
+        padding: 26px 18px;
+    }
+
+    .summary-position-value {
+        font-size: 4rem;
+    }
+
+    .season-summary-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .season-summary-actions .btn {
+        width: 100%;
+    }
+}
