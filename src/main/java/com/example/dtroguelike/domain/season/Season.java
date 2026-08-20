@@ -1,5 +1,7 @@
 package com.example.dtroguelike.domain.season;
 
+import com.example.dtroguelike.domain.club.Club;
+import com.example.dtroguelike.domain.club.ClubExpectations;
 import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.standings.StandingsTable;
 
@@ -18,12 +20,20 @@ public class Season {
     private List<List<Match>> fixture = new ArrayList<>();
     private int currentRound;
     private StandingsTable standings;
+    private SeasonObjective objective;
+    private SeasonObjectiveResult objectiveResult;
 
-    public Season(int year) {
+    public Season(int year, Club managedClub) {
         this.year = year;
         this.phase = SeasonPhase.PRESEASON;
         this.stats = new SeasonStats();
         this.currentRound = 0;
+
+        ClubExpectations expectations = managedClub.getExpectations();
+        int targetPosition = expectations.getMinimumExpectedPosition();
+        boolean mustWinLeague = expectations.isExpectedToWinLeague();
+    
+        this.objective = new SeasonObjective(targetPosition, mustWinLeague);
     }
 
     public int getYear() {
@@ -51,6 +61,18 @@ public class Season {
 
     public void addRound(List<Match> matches) {
         fixture.add(matches);
+    }
+
+    public SeasonObjective getObjective(){
+        return objective;
+    }
+    
+    public void setObjectiveResult(SeasonObjectiveResult objectiveResult) {
+        this.objectiveResult = objectiveResult;
+    }
+
+    public SeasonObjectiveResult getObjectiveResult() {
+        return objectiveResult;
     }
     
     /*

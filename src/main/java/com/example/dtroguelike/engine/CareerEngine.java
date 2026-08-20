@@ -11,6 +11,8 @@ import com.example.dtroguelike.domain.common.GamePhase;
 import com.example.dtroguelike.domain.manager.Manager;
 import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.season.Season;
+import com.example.dtroguelike.domain.season.SeasonObjective;
+import com.example.dtroguelike.domain.season.SeasonObjectiveResult;
 import com.example.dtroguelike.domain.season.SeasonPhase;
 import com.example.dtroguelike.domain.standings.StandingsTable;
 
@@ -62,7 +64,7 @@ public class CareerEngine {
 
     /** Comienza una nueva temporada dentro de la carrera actual. */
     public void startSeason(Career career, int year) {
-        Season season = new Season(year);
+        Season season = new Season(year, career.getCurrentClub());
 
         List<Club> leagueClubs = clubsOfManagedLeague(career);
         List<List<Match>> fixture = fixtureGenerator.generate(leagueClubs, year);
@@ -121,6 +123,15 @@ public class CareerEngine {
         reputationEngine.adjustJobSecurity(career.getCurrentClubState());
         progressionEngine.applyManagerGrowth(career);
 
+        //Evaluar objetivos de temporada
+        Club managedClub = career.getCurrentClub();
+        SeasonObjective objective = season.getObjective();
+        SeasonObjectiveResult objectiveResult = new SeasonObjectiveResult();
+        int finalPosition = season.getStandings().getEntry(managedClub.getId()).getPosition();
+
+        objectiveResult.evaluateObjective(objective.getTargetPosition(), finalPosition, objective.mustWinLeague());
+        season.setObjectiveResult(objectiveResult);
+        
         season.finish();
 
         career.setPhase(GamePhase.END_OF_SEASON);

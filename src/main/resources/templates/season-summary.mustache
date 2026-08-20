@@ -44,7 +44,32 @@
             {{seasonAssessment}}
         </p>
     </section>
+    
+    <!-- OBJETIVO DE TEMPORADA -->
+    <section class="card season-summary-objective
+        {{#objectiveCompleted}}objective-completed{{/objectiveCompleted}}
+        {{^objectiveCompleted}}objective-failed{{/objectiveCompleted}}">
 
+        <div class="summary-card-header">
+            <div>
+                <p class="season-label">OBJETIVO DE TEMPORADA</p>
+                <h2>{{objectiveStatus}}</h2>
+            </div>
+        </div>
+
+        <div class="season-objective-content">
+
+            <p class="season-objective-description">
+                {{objectiveDescription}}
+            </p>
+
+            <p class="season-objective-message">
+                {{objectiveResultMessage}}
+            </p>
+
+        </div>
+
+    </section>
     <!-- CONTINUAR CARRERA -->
     <section class="season-summary-actions">
         <form action="/career/season/next" method="post">

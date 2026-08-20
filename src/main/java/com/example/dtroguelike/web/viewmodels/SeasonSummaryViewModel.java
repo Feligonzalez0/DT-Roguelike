@@ -5,6 +5,8 @@ import com.example.dtroguelike.domain.club.Club;
 import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.match.MatchState;
 import com.example.dtroguelike.domain.season.Season;
+import com.example.dtroguelike.domain.season.SeasonObjective;
+import com.example.dtroguelike.domain.season.SeasonObjectiveResult;
 import com.example.dtroguelike.domain.season.SeasonPhase;
 
 import java.util.ArrayList;
@@ -37,6 +39,10 @@ public class SeasonSummaryViewModel {
     public final List<StandingsEntryViewModel> standings;
     public final List<FixtureMatchViewModel> recentMatches;
     public final String seasonAssessment;
+    public final String objectiveDescription;
+    public final boolean objectiveCompleted;
+    public final String objectiveStatus;
+    public final String objectiveResultMessage;
 
     public SeasonSummaryViewModel(Career career) {
         if (career == null || career.getCurrentSeason() == null) {
@@ -97,6 +103,22 @@ public class SeasonSummaryViewModel {
         this.standings = new StandingsViewModel(season, managedClub).entries;
         this.recentMatches = lastFiveManagedMatches(season, managedClub.getId());
         this.seasonAssessment = buildAssessment(finalPosition, standings.size(), champion);
+        
+        SeasonObjective objective = season.getObjective();
+        SeasonObjectiveResult objectiveResult = season.getObjectiveResult();
+
+        if (objective == null) {
+            throw new IllegalStateException("La temporada no tiene un objetivo definido.");
+        }
+
+        if (objectiveResult == null) {
+            throw new IllegalStateException("La temporada no tiene un resultado de objetivo.");
+        }
+
+        this.objectiveDescription = objective.getDescription();
+        this.objectiveCompleted = objectiveResult.isObjectiveCompleted();
+        this.objectiveStatus = objectiveCompleted ? "CUMPLIDO" : "INCUMPLIDO";
+        this.objectiveResultMessage = buildObjectiveResultMessage(objective, objectiveResult, finalPosition);
     }
 
     private void ensureSeasonIsComplete(Season season) {
@@ -148,5 +170,30 @@ public class SeasonSummaryViewModel {
             return "Temporada complicada. El equipo terminó en la parte baja de la tabla.";
         }
         return "Temporada aceptable. El equipo terminó en la zona media de la tabla.";
+    }
+
+    private String buildObjectiveResultMessage(
+        SeasonObjective objective,
+        SeasonObjectiveResult result,
+        int finalPosition) {
+
+        if (result.isObjectiveCompleted()) {
+            if (objective.mustWinLeague()) {
+                return "El equipo salió campeón y cumplió el objetivo de ganar la liga.";
+            }
+
+            return "Terminaste " + finalPosition
+                    + "° y cumpliste el objetivo de "
+                    + objective.getDescription().toLowerCase() + ".";
+        }
+
+        if (objective.mustWinLeague()) {
+            return "El equipo terminó " + finalPosition
+                    + "° y no logró cumplir el objetivo de ganar la liga.";
+        }
+
+        return "Terminaste " + finalPosition
+                + "° y no alcanzaste el objetivo de "
+                + objective.getDescription().toLowerCase() + ".";
     }
 }

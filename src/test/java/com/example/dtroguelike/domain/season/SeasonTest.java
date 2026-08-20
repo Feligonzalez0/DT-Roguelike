@@ -2,13 +2,17 @@ package com.example.dtroguelike.domain.season;
 
 import org.junit.jupiter.api.Test;
 
+import com.example.dtroguelike.domain.club.Club;
+import com.example.dtroguelike.domain.club.TeamStrength;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SeasonTest {
 
     @Test
     void unaTemporadaComienzaEnPreseason() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         assertEquals(SeasonPhase.PRESEASON, season.getPhase());
         assertEquals(2026, season.getYear());
@@ -16,8 +20,8 @@ class SeasonTest {
 
     @Test
     void puedeAvanzarDesdePreseasonHastaTransferWindow() {
-        Season season = new Season(2026);
-
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
         season.startTransferWindow();
 
         assertEquals(SeasonPhase.TRANSFER_WINDOW, season.getPhase());
@@ -25,7 +29,8 @@ class SeasonTest {
 
     @Test
     void puedeAvanzarDesdeTransferWindowHastaRegularSeason() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         season.startTransferWindow();
         season.startRegularSeason();
@@ -35,7 +40,8 @@ class SeasonTest {
 
     @Test
     void puedeFinalizarLaTemporada() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         season.startTransferWindow();
         season.startRegularSeason();
@@ -46,7 +52,8 @@ class SeasonTest {
 
     @Test
     void puedePasarDeEndOfSeasonASummary() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         season.startTransferWindow();
         season.startRegularSeason();
@@ -58,7 +65,8 @@ class SeasonTest {
 
     @Test
     void cicloCompletoDeUnaTemporada() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         assertEquals(SeasonPhase.PRESEASON, season.getPhase());
 
@@ -77,7 +85,8 @@ class SeasonTest {
 
     @Test
     void noPuedeComenzarRegularSeasonDesdePreseason() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         assertThrows(
                 IllegalStateException.class,
@@ -87,7 +96,8 @@ class SeasonTest {
 
     @Test
     void noPuedeFinalizarDesdePreseason() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         assertThrows(
                 IllegalStateException.class,
@@ -97,7 +107,8 @@ class SeasonTest {
 
     @Test
     void noPuedeMostrarSummaryAntesDeFinalizar() {
-        Season season = new Season(2026);
+        Club club = new Club("1", "Boca", "Argentina", "LPF", 50, new TeamStrength(50, 50, 50));
+        Season season = new Season(2026, club);
 
         season.startTransferWindow();
         season.startRegularSeason();
