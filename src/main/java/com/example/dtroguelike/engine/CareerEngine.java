@@ -118,9 +118,6 @@ public class CareerEngine {
         }
 
         seasonSimulator.simulateSecondHalf(career);
-
-        reputationEngine.updateAfterSeason(career);
-        reputationEngine.adjustJobSecurity(career.getCurrentClubState());
         progressionEngine.applyManagerGrowth(career);
 
         //Evaluar objetivos de temporada
@@ -132,6 +129,8 @@ public class CareerEngine {
         objectiveResult.evaluateObjective(objective.getTargetPosition(), finalPosition, objective.mustWinLeague());
         season.setObjectiveResult(objectiveResult);
         
+        reputationEngine.updateAfterSeason(career);
+
         season.finish();
 
         career.setPhase(GamePhase.END_OF_SEASON);

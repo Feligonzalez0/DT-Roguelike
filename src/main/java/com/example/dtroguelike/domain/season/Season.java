@@ -22,12 +22,14 @@ public class Season {
     private StandingsTable standings;
     private SeasonObjective objective;
     private SeasonObjectiveResult objectiveResult;
+    private int reputationChange;
 
     public Season(int year, Club managedClub) {
         this.year = year;
         this.phase = SeasonPhase.PRESEASON;
         this.stats = new SeasonStats();
         this.currentRound = 0;
+        this.reputationChange = 0;
 
         ClubExpectations expectations = managedClub.getExpectations();
         int targetPosition = expectations.getMinimumExpectedPosition();
@@ -73,6 +75,13 @@ public class Season {
 
     public SeasonObjectiveResult getObjectiveResult() {
         return objectiveResult;
+    }
+    public int getReputationChange() {
+        return reputationChange;
+    }
+
+    public void setReputationChange(int reputationChange) {
+        this.reputationChange = reputationChange;
     }
     
     /*

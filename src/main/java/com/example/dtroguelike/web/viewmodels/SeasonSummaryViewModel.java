@@ -89,7 +89,7 @@ public class SeasonSummaryViewModel {
 
         this.finalPosition = standing.getPosition();
         this.champion = finalPosition == 1;
-        this.finalPositionLabel = champion ? "CAMPEÓN" : finalPosition + "°";
+        this.finalPositionLabel = champion ? "¡CAMPEÓN!" : finalPosition + "°";
 
         this.matchesPlayed = stats.getMatchesPlayed();
         this.wins = stats.getWins();

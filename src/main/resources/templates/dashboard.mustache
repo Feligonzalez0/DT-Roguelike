@@ -406,6 +406,27 @@
 
             </section>
 
+            <!-- DEBUG ONLY -->
+            <section class="debug-card">
+                <h3>Debug — Reputación</h3>
+
+                {{#season}}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Temporada</th>
+                            <th>Δ Reputación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{year}}</td>
+                            <td>{{reputationChange}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                {{/season}}
+            </section>   
         </aside>
 
         {{/season}}

@@ -17,6 +17,7 @@ public class DashboardViewModel {
     public final String gamePhase;
     public final boolean hasClub;
     public final List<StandingsEntryViewModel> nearbyStandings;
+    public final int reputationChange; // DEBUG ONLY
 
     public DashboardViewModel(Career career) {
         this.manager = new ManagerViewModel(career.getManager());
@@ -25,7 +26,8 @@ public class DashboardViewModel {
         this.season = career.getCurrentSeason() != null ? new SeasonViewModel(career.getCurrentSeason(), career.getCurrentClub()) : null;
         this.careerState = career.getState().name();
         this.gamePhase = career.getPhase().name();
-        
+        this.reputationChange = career.getCurrentSeason() != null ? career.getCurrentSeason().getReputationChange() : 0;
+
         //Table preview
         if (career.getCurrentSeason() != null && career.getCurrentClub() != null 
             && career.getCurrentSeason().getStandings() != null){
