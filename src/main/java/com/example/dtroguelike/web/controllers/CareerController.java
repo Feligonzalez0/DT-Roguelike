@@ -4,8 +4,10 @@ import com.example.dtroguelike.application.CareerService;
 import com.example.dtroguelike.application.SeasonService;
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.match.Match;
+import com.example.dtroguelike.domain.offer.ClubOffer;
 import com.example.dtroguelike.domain.season.SeasonPhase;
 import com.example.dtroguelike.web.viewmodels.DashboardViewModel;
+import com.example.dtroguelike.web.viewmodels.EmploymentViewModel;
 import com.example.dtroguelike.web.viewmodels.SeasonSummaryViewModel;
 
 import java.util.List;
@@ -92,5 +94,54 @@ public class CareerController {
         Career career = requireCurrentCareer();
         seasonService.startNextSeason(career);
         return career;
+    }
+
+    public Career continueAtCurrentClub() {
+        Career career = requireCurrentCareer();
+        careerService.continueAtCurrentClub(career);
+        return career;
+    }
+
+    public List<ClubOffer> resign() {
+        Career career = requireCurrentCareer();
+        return careerService.resign(career);
+    }
+
+    public boolean evaluatePossibleFiring() {
+        Career career = requireCurrentCareer();
+        return careerService.evaluatePossibleFiring(career);
+    }
+
+    public ClubOffer showRenewalOffer() {
+        Career career = requireCurrentCareer();
+        return careerService.getRenewalOffer(career);
+    }
+
+    public Career acceptRenewal() {
+        Career career = requireCurrentCareer();
+        careerService.acceptRenewal(career);
+        return career;
+    }
+
+    public List<ClubOffer> rejectRenewal() {
+        Career career = requireCurrentCareer();
+        return careerService.rejectRenewal(career);
+    }
+
+    public Map<String, Object> showEmploymentSituation() {
+        Career career = requireCurrentCareer();
+
+        ClubOffer renewalOffer = careerService.getRenewalOffer(career);
+
+        EmploymentViewModel viewModel =
+                new EmploymentViewModel(
+                        career,
+                        renewalOffer
+                );
+
+        return Map.of(
+                "employment",
+                viewModel
+        );
     }
 }

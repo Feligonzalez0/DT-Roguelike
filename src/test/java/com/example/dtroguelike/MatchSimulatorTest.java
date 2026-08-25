@@ -50,7 +50,7 @@ class MatchSimulatorTest {
 
         Manager manager = new Manager("DT", 40, "Argentina", ManagerStyle.MANAGER);
         Career career = engine.startCareer(manager);
-        engine.assignClub(career, managedClub);
+        engine.assignClub(career, managedClub,2);
         return career;
     }
 

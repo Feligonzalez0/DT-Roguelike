@@ -68,7 +68,7 @@ class CareerEngineTest {
         CareerEngine engine = buildCareerEngine();
         Career career = engine.startCareer(manager);
 
-        engine.assignClub(career, buildClub());
+        engine.assignClub(career, buildClub(),2);
 
         return career;
     }

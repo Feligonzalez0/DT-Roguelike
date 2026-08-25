@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Situación laboral - DT Roguelike</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<main class="page">
+
+    <section class="card employment-card">
+
+        <p class="season-label">
+            SITUACIÓN LABORAL
+        </p>
+
+        <h1>
+            {{employment.clubName}}
+        </h1>
+
+        <div class="employment-info">
+
+            <div class="employment-stat">
+                <span class="employment-stat-label">
+                    Seguridad del puesto
+                </span>
+
+                <strong>
+                    {{employment.jobSecurity}}/100
+                </strong>
+            </div>
+
+            <div class="employment-stat">
+                <span class="employment-stat-label">
+                    Contrato restante
+                </span>
+
+                <strong>
+                    {{employment.contractRemainingYears}} año(s)
+                </strong>
+            </div>
+
+        </div>
+
+
+        {{#employment.contractActive}}
+
+        <div class="employment-message">
+            <p>
+                Tu contrato todavía está vigente.
+            </p>
+        </div>
+
+        <div class="employment-actions">
+
+            <form
+                    action="/career/employment/continue"
+                    method="post">
+
+                <button
+                        class="btn btn-primary"
+                        type="submit">
+
+                    Continuar en {{employment.clubName}}
+
+                </button>
+
+            </form>
+
+            <form
+                    action="/career/employment/resign"
+                    method="post">
+
+                <button
+                        class="btn btn-secondary"
+                        type="submit">
+
+                    Renunciar y buscar otro club
+
+                </button>
+
+            </form>
+
+        </div>
+
+        {{/employment.contractActive}}
+
+
+        {{#employment.contractEnded}}
+
+        <div class="renewal-panel">
+
+            <p class="season-label">
+                FIN DEL CONTRATO
+            </p>
+
+            <h2>
+                Tu contrato con {{employment.clubName}} ha terminado.
+            </h2>
+
+            {{#employment.renewalAvailable}}
+
+            <p>
+                El club quiere ofrecerte una renovación.
+            </p>
+
+            <ul class="offer-details">
+
+                <li>
+                    Contrato:
+                    {{employment.renewalOffer.contractLengthYears}} año(s)
+                </li>
+
+                <li>
+                    Salario:
+                    ${{employment.renewalOffer.salary}}
+                </li>
+
+                <li>
+                    Seguridad del puesto:
+                    {{employment.renewalOffer.jobSecurity}}/100
+                </li>
+
+            </ul>
+
+            <div class="employment-actions">
+
+                <form
+                        action="/career/employment/renew"
+                        method="post">
+
+                    <button
+                            class="btn btn-primary"
+                            type="submit">
+
+                        Aceptar renovación
+
+                    </button>
+
+                </form>
+
+                <form
+                        action="/career/employment/reject-renewal"
+                        method="post">
+
+                    <button
+                            class="btn btn-secondary"
+                            type="submit">
+
+                        Rechazar y buscar nuevo club
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            {{/employment.renewalAvailable}}
+
+
+            {{^employment.renewalAvailable}}
+
+            <p>
+                El club no te ha ofrecido una renovación.
+            </p>
+
+            <form
+                    action="/career/employment/reject-renewal"
+                    method="post">
+
+                <button
+                        class="btn btn-primary"
+                        type="submit">
+
+                    Buscar nuevo club
+
+                </button>
+
+            </form>
+
+            {{/employment.renewalAvailable}}
+
+        </div>
+
+        {{/employment.contractEnded}}
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

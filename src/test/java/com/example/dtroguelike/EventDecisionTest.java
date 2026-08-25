@@ -35,7 +35,7 @@ class EventDecisionTest {
         CareerEngine engine = new CareerEngine(seasonSimulator, new ReputationEngine(), new ProgressionEngine(),
                 new FixtureGenerator(), List.of(club, rival));
         Career career = engine.startCareer(manager);
-        engine.assignClub(career, club);
+        engine.assignClub(career, club,2);
         return career;
     }
 

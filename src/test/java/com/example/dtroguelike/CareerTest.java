@@ -73,7 +73,7 @@ class CareerTest {
         Career career = engine.startCareer(manager);
         Club club = buildClub("river-plate", 90);
 
-        engine.assignClub(career, club);
+        engine.assignClub(career, club,2);
 
         assertEquals(club, career.getCurrentClub());
         assertNotNull(career.getCurrentClubState());
@@ -88,7 +88,7 @@ class CareerTest {
         Career career = engine.startCareer(manager);
         // startSeason() arma el fixture de la liga del club dirigido, asi
         // que necesita un club ya asignado (igual que en el flujo real).
-        engine.assignClub(career, buildClub("boca-juniors", 80));
+        engine.assignClub(career, buildClub("boca-juniors", 80),2);
 
         engine.startSeason(career, 2026);
 

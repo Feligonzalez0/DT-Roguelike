@@ -4,6 +4,7 @@ import com.example.dtroguelike.domain.club.Club;
 import com.example.dtroguelike.domain.club.ClubState;
 import com.example.dtroguelike.domain.common.GamePhase;
 import com.example.dtroguelike.domain.manager.Manager;
+import com.example.dtroguelike.domain.offer.ClubOffer;
 import com.example.dtroguelike.domain.season.Season;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class Career {
     private GamePhase phase;
     private final Legacy legacy;
     private final List<ClubHistory> clubHistory = new ArrayList<>();
+    private int contractRemainingYears;
+    private ClubOffer pendingRenewalOffer;
 
     public Career(Manager manager) {
         this.id = UUID.randomUUID().toString();
@@ -33,6 +36,7 @@ public class Career {
         this.state = CareerState.CREATING_MANAGER;
         this.phase = GamePhase.MANAGER_CREATION;
         this.legacy = new Legacy();
+        this.pendingRenewalOffer = null;
     }
 
     public String getId() {
@@ -98,7 +102,37 @@ public class Career {
         clubHistory.add(history);
     }
 
+    // METODOS CONTRATO
+    public int getContractRemainingYears(){
+        return this.contractRemainingYears;
+    }
+
+    public void setContractRemainingYears(int value){
+        this.contractRemainingYears = value;
+    }
+
+    public void decrementContractRemainingYears(){
+        if (contractRemainingYears == 0) throw new IllegalStateException("El contrato ya finalizó. No pueden quedar años restantes negativos.");
+        contractRemainingYears--;
+    }
+
+    public boolean hasActiveContract(){
+        return contractRemainingYears > 0;
+    }
+
+    public boolean isContractExpired(){
+        return contractRemainingYears == 0;
+    }
+
     public boolean isFinished() {
         return state == CareerState.RETIRED || state == CareerState.FINISHED;
+    }
+
+    public ClubOffer getPendingRenewalOffer(){
+        return pendingRenewalOffer;
+    }
+
+    public void setPendingRenewalOffer(ClubOffer offer){
+        this.pendingRenewalOffer = offer;
     }
 }

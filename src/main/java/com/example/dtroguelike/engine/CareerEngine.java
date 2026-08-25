@@ -1,15 +1,18 @@
 package com.example.dtroguelike.engine;
 
 import java.util.List;
+import java.util.Random;
 
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.career.CareerState;
 import com.example.dtroguelike.domain.career.ClubDepartureReason;
 import com.example.dtroguelike.domain.career.ClubHistory;
 import com.example.dtroguelike.domain.club.Club;
+import com.example.dtroguelike.domain.common.GameConstants;
 import com.example.dtroguelike.domain.common.GamePhase;
 import com.example.dtroguelike.domain.manager.Manager;
 import com.example.dtroguelike.domain.match.Match;
+import com.example.dtroguelike.domain.offer.ClubOffer;
 import com.example.dtroguelike.domain.season.Season;
 import com.example.dtroguelike.domain.season.SeasonObjective;
 import com.example.dtroguelike.domain.season.SeasonObjectiveResult;
@@ -29,17 +32,29 @@ public class CareerEngine {
     private final FixtureGenerator fixtureGenerator;
     private final List<Club> allClubs;
     private Career currentCareer;
+    private final Random random;
 
     public CareerEngine(SeasonSimulator seasonSimulator,
                          ReputationEngine reputationEngine,
                          ProgressionEngine progressionEngine,
                          FixtureGenerator fixtureGenerator,
                          List<Club> allClubs) {
+        this(seasonSimulator, reputationEngine, progressionEngine, fixtureGenerator, allClubs, new Random());
+    }
+
+    public CareerEngine(
+            SeasonSimulator seasonSimulator,
+            ReputationEngine reputationEngine,
+            ProgressionEngine progressionEngine,
+            FixtureGenerator fixtureGenerator,
+            List<Club> allClubs,
+            Random random) {
         this.seasonSimulator = seasonSimulator;
         this.reputationEngine = reputationEngine;
         this.progressionEngine = progressionEngine;
         this.fixtureGenerator = fixtureGenerator;
         this.allClubs = allClubs;
+        this.random = random;
     }
 
     /** Crea una carrera nueva a partir de un Manager recien creado. */
@@ -54,8 +69,10 @@ public class CareerEngine {
     }
 
     /** Asigna un club al Manager (tras aceptar una oferta) y arranca la temporada. */
-    public void assignClub(Career career, Club club) {
+    public void assignClub(Career career, Club club, int contractLength) {
         career.assignClub(club);
+        career.setContractRemainingYears(contractLength);
+
         career.getManager().getStats().incrementClubsManaged();
         career.setState(CareerState.ACTIVE);
 
@@ -65,7 +82,7 @@ public class CareerEngine {
     /** Comienza una nueva temporada dentro de la carrera actual. */
     public void startSeason(Career career, int year) {
         Season season = new Season(year, career.getCurrentClub());
-
+        
         List<Club> leagueClubs = clubsOfManagedLeague(career);
         List<List<Match>> fixture = fixtureGenerator.generate(leagueClubs, year);
         season.setFixture(fixture);
@@ -120,6 +137,8 @@ public class CareerEngine {
         seasonSimulator.simulateSecondHalf(career);
         progressionEngine.applyManagerGrowth(career);
 
+        career.decrementContractRemainingYears();
+
         //Evaluar objetivos de temporada
         Club managedClub = career.getCurrentClub();
         SeasonObjective objective = season.getObjective();
@@ -152,10 +171,119 @@ public class CareerEngine {
         startSeason(career, nextYear);
     }
 
+    /* El Manager continúa en el club actual */
+    public void continueAtCurrentClub(Career career) {
+        if (career.getCurrentClub() == null) {
+            throw new IllegalStateException("No hay un club actual.");
+        }
+
+        if (career.getContractRemainingYears() <= 0) {
+            throw new IllegalStateException("El contrato ha terminado.");
+        }
+
+        int nextYear = career.getCurrentSeason().getYear() + 1;
+        startSeason(career, nextYear);
+    }
+
+    /* Evaluación de posiblo despido. */
+    public boolean evaluatePossibleFiring(Career career) {
+        if (career.getCurrentClub() == null) {
+            return false;
+        }
+
+        int jobSecurity = career.getCurrentClubState().getJobSecurity();
+
+        int firingChance;
+
+        if (jobSecurity >= GameConstants.FIRING_SAFE_THRESHOLD) {
+            firingChance = 0;
+        } else if (jobSecurity >= 50) {
+            firingChance = GameConstants.FIRING_CHANCE_50_59;
+        } else if (jobSecurity >= 40) {
+            firingChance = GameConstants.FIRING_CHANCE_40_49;
+        } else if (jobSecurity >= 30) {
+            firingChance = GameConstants.FIRING_CHANCE_30_39;
+        } else if (jobSecurity >= 20) {
+            firingChance = GameConstants.FIRING_CHANCE_20_29;
+        } else if (jobSecurity >= 10) {
+            firingChance = GameConstants.FIRING_CHANCE_10_19;
+        } else if (jobSecurity > 0) {
+            firingChance = GameConstants.FIRING_CHANCE_1_9;
+        } else {
+            firingChance = GameConstants.FIRING_CHANCE_0;
+        }
+
+        if (random.nextInt(100) >= firingChance) {
+            return false;
+        }
+
+        fireManager(career);
+        return true;
+    }
+
     /** El club despide al Manager. */
     public void fireManager(Career career) {
         reputationEngine.applyFiringPenalty(career);
         recordDeparture(career, ClubDepartureReason.FIRED);
+        career.clearClub();
+        career.setState(CareerState.LOOKING_FOR_NEW_CLUB);
+        career.setPhase(GamePhase.CLUB_SELECTION_AFTER_DEPARTURE);
+    }
+
+    /** El Manager decide renunciar. */
+    public void resignManager(Career career) {
+        recordDeparture(career, ClubDepartureReason.RESIGNED);
+        career.clearClub();
+        career.setState(CareerState.LOOKING_FOR_NEW_CLUB);
+        career.setPhase(GamePhase.CLUB_SELECTION_AFTER_DEPARTURE);
+    }
+
+    public void acceptRenewal(Career career, ClubOffer renewalOffer) {
+        if (renewalOffer == null) {
+            throw new IllegalArgumentException(
+                    "No hay oferta de renovación."
+            );
+        }
+
+        if (career.getCurrentClub() == null) {
+            throw new IllegalStateException(
+                    "No hay un club actual."
+            );
+        }
+
+        if (renewalOffer.getClub().getId()
+                != career.getCurrentClub().getId()) {
+            throw new IllegalArgumentException(
+                    "La renovación no corresponde al club actual."
+            );
+        }
+
+        if (career.getContractRemainingYears() > 0) {
+            throw new IllegalStateException(
+                    "El contrato todavía está vigente."
+            );
+        }
+
+        career.setContractRemainingYears(
+                renewalOffer.getContractLengthYears()
+        );
+
+        int nextYear = career.getCurrentSeason().getYear() + 1;
+        startSeason(career, nextYear);
+    }
+    
+    /* El manager decide no continuar en el club actual. Contrato terminado. */
+    public void rejectRenewal(Career career) {
+        if (career.getCurrentClub() == null) {
+            throw new IllegalStateException("No hay un club actual.");
+        }
+
+        if (career.getContractRemainingYears() > 0) {
+            throw new IllegalStateException("El contrato todavía está vigente.");
+        }
+
+        recordDeparture(career, ClubDepartureReason.CONTRACT_ENDED);
+
         career.clearClub();
         career.setState(CareerState.LOOKING_FOR_NEW_CLUB);
         career.setPhase(GamePhase.CLUB_SELECTION_AFTER_DEPARTURE);

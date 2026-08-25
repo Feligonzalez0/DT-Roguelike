@@ -96,8 +96,59 @@ public class WebRoutes {
         });
 
         post("/career/season/next", (req, res) -> {
-            careerController.startNextSeason();
+            res.redirect("/career/employment");
+            return null;
+        });
+
+        // =========================================================
+        // SITUACIÓN LABORAL
+        // =========================================================
+
+        get("/career/employment", (req, res) ->
+                render(
+                        careerController.showEmploymentSituation(),
+                        "employment.mustache"
+                )
+        );
+
+        // CONTINUAR EN CLUB
+        post("/career/employment/continue", (req, res) -> {
+
+            careerController.continueAtCurrentClub();
+
             res.redirect("/career/dashboard");
+
+            return null;
+        });
+
+
+        // RENUNCIAR
+        post("/career/employment/resign", (req, res) -> {
+
+            careerController.resign();
+
+            res.redirect("/career/clubs");
+
+            return null;
+        });
+
+        // ACEPTAR RENOVACIÓN
+        post("/career/employment/renew", (req, res) -> {
+
+            careerController.acceptRenewal();
+
+            res.redirect("/career/dashboard");
+
+            return null;
+        });
+
+        // RECHAZAR RENOVACIÓN
+        post("/career/employment/reject-renewal", (req, res) -> {
+
+            careerController.rejectRenewal();
+
+            res.redirect("/career/clubs");
+
             return null;
         });
     }

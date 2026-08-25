@@ -76,7 +76,7 @@ class SeasonSimulatorHalvesTest {
 
         Manager manager = new Manager("DT Test", 40, "Argentina", ManagerStyle.MANAGER);
         Career career = engine.startCareer(manager);
-        engine.assignClub(career, leagueClubs.get(0));
+        engine.assignClub(career, leagueClubs.get(0),2);
 
         return new Harness(engine, seasonSimulator, career);
     }

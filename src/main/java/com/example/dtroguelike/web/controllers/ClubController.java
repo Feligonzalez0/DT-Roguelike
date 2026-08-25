@@ -23,7 +23,6 @@ import java.util.Optional;
 public class ClubController {
 
     private final CareerService careerService;
-    private List<ClubOffer> currentOffers = new ArrayList<>();
 
     public ClubController(CareerService careerService) {
         this.careerService = careerService;
@@ -31,12 +30,16 @@ public class ClubController {
 
     public Map<String, Object> showOffers() {
         Career career = requireCurrentCareer();
-        currentOffers = careerService.generateOffers(career);
+
+        List<ClubOffer> currentOffers =
+                careerService.getCurrentOffers();
 
         List<ClubOfferViewModel> offerViewModels = new ArrayList<>();
+
         for (ClubOffer offer : currentOffers) {
             offerViewModels.add(new ClubOfferViewModel(offer));
         }
+
         return Map.of(
                 "managerName", career.getManager().getName(),
                 "offers", offerViewModels
@@ -45,12 +48,25 @@ public class ClubController {
 
     public Career selectClub(String clubId) {
         Career career = requireCurrentCareer();
-        ClubOffer chosen = currentOffers.stream()
-                .filter(offer -> offer.getClub().getId().equals(clubId))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Oferta no encontrada para el club: " + clubId));
 
-        careerService.selectClub(career, chosen.getClub());
+        List<ClubOffer> currentOffers =
+                careerService.getCurrentOffers();
+
+        ClubOffer chosen = currentOffers.stream()
+                .filter(offer ->
+                        offer.getClub().getId().equals(clubId))
+                .findFirst()
+                .orElseThrow(() ->
+                        new NoSuchElementException(
+                                "Oferta no encontrada para el club: " + clubId
+                        ));
+
+        careerService.selectClub(
+                career,
+                chosen.getClub(),
+                chosen.getContractLengthYears()
+        );
+
         return career;
     }
 

@@ -32,24 +32,39 @@ public class ClubOfferGenerator {
     }
 
     public List<ClubOffer> generateOffers(Career career) {
+        return generateOffers(career, null);
+    }
+
+    public List<ClubOffer> generateOffers(Career career, Club excludedClub) {
         List<ClubOffer> offers = new ArrayList<>();
+
         if (allClubs == null || allClubs.isEmpty()) {
             return offers;
         }
 
         int reputation = career.getManager().getReputation();
 
-        List<Club> candidates = new ArrayList<>(allClubs);
-        candidates.sort(Comparator.comparingInt(c -> Math.abs(c.getReputation() - reputation)));
+        List<Club> candidates = allClubs.stream()
+                .filter(club -> excludedClub == null
+                        || !club.getId().equals(excludedClub.getId()))
+                .filter(club -> Math.abs(club.getReputation() - reputation)
+                        <= GameConstants.MAX_OFFER_REPUTATION_DISTANCE)
+                .sorted(Comparator.comparingInt(
+                        club -> Math.abs(club.getReputation() - reputation)))
+                .toList();
 
         int offerCount = GameConstants.MIN_INITIAL_OFFERS
-                + random.nextInt(GameConstants.MAX_INITIAL_OFFERS - GameConstants.MIN_INITIAL_OFFERS + 1);
+                + random.nextInt(
+                        GameConstants.MAX_INITIAL_OFFERS
+                                - GameConstants.MIN_INITIAL_OFFERS + 1);
+
         offerCount = Math.min(offerCount, candidates.size());
 
         for (int i = 0; i < offerCount; i++) {
             Club club = candidates.get(i);
             offers.add(buildOffer(club, reputation));
         }
+
         return offers;
     }
 
@@ -62,5 +77,46 @@ public class ClubOfferGenerator {
                 GameConstants.MIN_JOB_SECURITY, GameConstants.MAX_JOB_SECURITY);
 
         return new ClubOffer(club, baseSalary, contractLength, expectations, jobSecurity);
+    }
+
+    public ClubOffer generateRenewalOffer(Career career) {
+        if (career.getCurrentClub() == null) {
+            return null;
+        }
+
+        if (career.getContractRemainingYears() > 0) {
+            return null;
+        }
+
+        if (!shouldOfferRenewal(career)) {
+            return null;
+        }
+
+        Club club = career.getCurrentClub();
+        int managerReputation = career.getManager().getReputation();
+
+        return buildOffer(club, managerReputation);
+    }
+
+    private boolean shouldOfferRenewal(Career career) {
+        int jobSecurity = career.getCurrentClubState().getJobSecurity();
+
+        boolean objectiveCompleted = career.getCurrentSeason().getObjectiveResult().isObjectiveCompleted();
+
+        int chance;
+
+        if (jobSecurity < GameConstants.RENEWAL_LOW_JOB_SECURITY) {
+            chance = GameConstants.RENEWAL_LOW_CHANCE;
+        } else if (objectiveCompleted
+                && jobSecurity >= GameConstants.RENEWAL_HIGH_JOB_SECURITY) {
+            chance = GameConstants.RENEWAL_HIGH_CHANCE;
+        } else if (objectiveCompleted
+                || jobSecurity >= GameConstants.RENEWAL_HIGH_JOB_SECURITY) {
+            chance = GameConstants.RENEWAL_MEDIUM_CHANCE;
+        } else {
+            chance = GameConstants.RENEWAL_LOW_CHANCE;
+        }
+
+        return random.nextInt(100) < chance;
     }
 }

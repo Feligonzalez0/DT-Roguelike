@@ -41,6 +41,25 @@ public final class GameConstants {
     public static final int MIN_JOB_SECURITY = 0;
     public static final int MAX_JOB_SECURITY = 100;
     public static final int DEFAULT_JOB_SECURITY = 60;
+    
+    // --- Despido por seguridad laboral ---
+    public static final int FIRING_SAFE_THRESHOLD = 60;
+
+    public static final int FIRING_CHANCE_50_59 = 5;
+    public static final int FIRING_CHANCE_40_49 = 10;
+    public static final int FIRING_CHANCE_30_39 = 25;
+    public static final int FIRING_CHANCE_20_29 = 45;
+    public static final int FIRING_CHANCE_10_19 = 70;
+    public static final int FIRING_CHANCE_1_9 = 90;
+    public static final int FIRING_CHANCE_0 = 100;
+
+    // --- Renovacion de contrato ---
+    public static final int RENEWAL_HIGH_CHANCE = 80;
+    public static final int RENEWAL_MEDIUM_CHANCE = 50;
+    public static final int RENEWAL_LOW_CHANCE = 20;
+
+    public static final int RENEWAL_HIGH_JOB_SECURITY = 60;
+    public static final int RENEWAL_LOW_JOB_SECURITY = 30;
 
     // --- Fuerza de equipo (0-100) ---
     public static final int MIN_TEAM_STRENGTH = 0;
@@ -56,6 +75,7 @@ public final class GameConstants {
     // --- Ofertas de club ---
     public static final int MIN_INITIAL_OFFERS = 3;
     public static final int MAX_INITIAL_OFFERS = 5;
+    public static final int MAX_OFFER_REPUTATION_DISTANCE = 30;
 
     // --- Simulacion de partidos (MatchSimulator) ---
     // Goles esperados "base" para un equipo sin diferencia de fuerza contra su rival.
