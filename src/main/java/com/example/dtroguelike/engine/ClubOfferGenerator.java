@@ -44,19 +44,37 @@ public class ClubOfferGenerator {
 
         int reputation = career.getManager().getReputation();
 
-        List<Club> candidates = allClubs.stream()
+        List<Club> candidates = new ArrayList<>(allClubs.stream()
                 .filter(club -> excludedClub == null
                         || !club.getId().equals(excludedClub.getId()))
                 .filter(club -> Math.abs(club.getReputation() - reputation)
                         <= GameConstants.MAX_OFFER_REPUTATION_DISTANCE)
                 .sorted(Comparator.comparingInt(
                         club -> Math.abs(club.getReputation() - reputation)))
-                .toList();
+                .toList());
 
-        int offerCount = GameConstants.MIN_INITIAL_OFFERS
-                + random.nextInt(
-                        GameConstants.MAX_INITIAL_OFFERS
-                                - GameConstants.MIN_INITIAL_OFFERS + 1);
+        int offerCount = GameConstants.MIN_INITIAL_OFFERS + random.nextInt(GameConstants.MAX_INITIAL_OFFERS - GameConstants.MIN_INITIAL_OFFERS + 1);
+        
+        // Si no hay suficientes clubes dentro del rango normal,
+        // buscamos clubes de menor reputación como fallback.
+        if (candidates.size() < offerCount) {
+            List<Club> fallbackCandidates = allClubs.stream()
+                    .filter(club -> excludedClub == null
+                            || !club.getId().equals(excludedClub.getId()))
+                    .filter(club -> club.getReputation() < reputation)
+                    .filter(club -> !candidates.contains(club))
+                    .sorted(Comparator.comparingInt(
+                            club -> reputation - club.getReputation()))
+                    .toList();
+
+            for (Club club : fallbackCandidates) {
+                if (candidates.size() >= offerCount) {
+                    break;
+                }
+
+                candidates.add(club);
+            }
+        }
 
         offerCount = Math.min(offerCount, candidates.size());
 

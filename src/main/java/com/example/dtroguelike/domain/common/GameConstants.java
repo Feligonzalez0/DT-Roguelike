@@ -18,7 +18,7 @@ public final class GameConstants {
     // --- Reputacion (0-100) ---
     public static final int MIN_REPUTATION = 0;
     public static final int MAX_REPUTATION = 100;
-    public static final int DEFAULT_MANAGER_REPUTATION = 30;
+    public static final int DEFAULT_MANAGER_REPUTATION = 100;
 
     // --- Relaciones de club (0-100) ---
     public static final int MIN_RELATION = 0;
@@ -75,7 +75,7 @@ public final class GameConstants {
     // --- Ofertas de club ---
     public static final int MIN_INITIAL_OFFERS = 3;
     public static final int MAX_INITIAL_OFFERS = 5;
-    public static final int MAX_OFFER_REPUTATION_DISTANCE = 30;
+    public static final int MAX_OFFER_REPUTATION_DISTANCE = 1;
 
     // --- Simulacion de partidos (MatchSimulator) ---
     // Goles esperados "base" para un equipo sin diferencia de fuerza contra su rival.
