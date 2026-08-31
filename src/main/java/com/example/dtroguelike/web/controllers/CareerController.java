@@ -1,11 +1,13 @@
 package com.example.dtroguelike.web.controllers;
 
 import com.example.dtroguelike.application.CareerService;
+import com.example.dtroguelike.application.SeasonEndResult;
 import com.example.dtroguelike.application.SeasonService;
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.offer.ClubOffer;
 import com.example.dtroguelike.domain.season.SeasonPhase;
+import com.example.dtroguelike.web.viewmodels.CareerOverViewModel;
 import com.example.dtroguelike.web.viewmodels.DashboardViewModel;
 import com.example.dtroguelike.web.viewmodels.EmploymentViewModel;
 import com.example.dtroguelike.web.viewmodels.SeasonSummaryViewModel;
@@ -141,6 +143,26 @@ public class CareerController {
 
         return Map.of(
                 "employment",
+                viewModel
+        );
+    }
+
+    // CAREER OVER
+    public boolean isCareerOver() {
+        return requireCurrentCareer().isFinished();
+    }
+    
+    public SeasonEndResult processSeasonEnd() {
+        Career career = requireCurrentCareer();
+        return careerService.processSeasonEnd(career);
+    }
+
+    public Map<String, Object> showCareerOver() {
+        Career career = requireCurrentCareer();
+        CareerOverViewModel viewModel = new CareerOverViewModel(career);
+
+        return Map.of(
+                "careerOver",
                 viewModel
         );
     }

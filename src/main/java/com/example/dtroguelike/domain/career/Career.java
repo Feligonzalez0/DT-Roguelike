@@ -29,6 +29,7 @@ public class Career {
     private final List<ClubHistory> clubHistory = new ArrayList<>();
     private int contractRemainingYears;
     private ClubOffer pendingRenewalOffer;
+    private CareerEndReason endReason;
 
     public Career(Manager manager) {
         this.id = UUID.randomUUID().toString();
@@ -37,6 +38,7 @@ public class Career {
         this.phase = GamePhase.MANAGER_CREATION;
         this.legacy = new Legacy();
         this.pendingRenewalOffer = null;
+        this.endReason = null;
     }
 
     public String getId() {
@@ -134,5 +136,19 @@ public class Career {
 
     public void setPendingRenewalOffer(ClubOffer offer){
         this.pendingRenewalOffer = offer;
+    }
+
+    public CareerEndReason getEndReason() {
+        return endReason;
+    }
+
+    public void finish(CareerEndReason reason) {
+        if (reason == null) {
+            throw new IllegalArgumentException("El motivo de finalización no puede ser null.");
+        }
+
+        this.endReason = reason;
+        this.state = CareerState.FINISHED;
+        this.phase = GamePhase.CAREER_FINISHED;
     }
 }

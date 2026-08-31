@@ -1,5 +1,6 @@
 package com.example.dtroguelike.web.routes;
 
+import com.example.dtroguelike.application.SeasonEndResult;
 import com.example.dtroguelike.config.AppContext;
 import com.example.dtroguelike.web.controllers.CareerController;
 import com.example.dtroguelike.web.controllers.ClubController;
@@ -14,6 +15,7 @@ import spark.template.mustache.MustacheTemplateEngine;
 import java.util.HashMap;
 import java.util.Map;
 
+import static spark.Spark.before;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -42,6 +44,11 @@ public class WebRoutes {
     }
 
     public void register() {
+        /* DEBUG
+        before((req, res) -> {
+            System.out.println("REQUEST: " + req.requestMethod() + " " + req.pathInfo());
+        });
+        */
         get("/", (req, res) -> render(homeController.index(), "index.mustache"));
 
         get("/career/create", (req, res) -> render(managerController.createForm(), "manager-create.mustache"));
@@ -57,8 +64,6 @@ public class WebRoutes {
             return null;
         });
 
-        get("/career/clubs", (req, res) -> render(clubController.showOffers(), "club-selection.mustache"));
-
         post("/career/club/select", (req, res) -> {
             clubController.selectClub(req.queryParams("clubId"));
             res.redirect("/career/dashboard");
@@ -69,6 +74,19 @@ public class WebRoutes {
         get("/career/fixture", (req, res) -> render(fixtureController.showFixture(), "fixture.mustache"));
         get("/career/standings", (req, res) -> render(standingsController.showStandings(), "standings.mustache"));
         get("/career/summary", (req, res) -> render(careerController.showSeasonSummary(), "season-summary.mustache"));
+        get("/career/career-over", (req, res) -> render(careerController.showCareerOver(), "career-over.mustache"));
+
+        get("/career/clubs", (req, res) -> {
+            if (careerController.isCareerOver()) {
+                res.redirect("/career/career-over");
+                return null;
+            }
+
+            return render(
+                    clubController.showOffers(),
+                    "club-selection.mustache"
+            );
+        });
 
         post("/career/match/simulate", (req, res) -> {
             careerController.simulateNextMatch();

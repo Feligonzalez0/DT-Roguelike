@@ -72,6 +72,7 @@ public class CareerEngine {
     public void assignClub(Career career, Club club, int contractLength) {
         career.assignClub(club);
         career.setContractRemainingYears(contractLength);
+        career.setPendingRenewalOffer(null);
 
         career.getManager().getStats().incrementClubsManaged();
         career.setState(CareerState.ACTIVE);
@@ -223,6 +224,8 @@ public class CareerEngine {
 
     /** El club despide al Manager. */
     public void fireManager(Career career) {
+        career.setPendingRenewalOffer(null);
+
         reputationEngine.applyFiringPenalty(career);
         recordDeparture(career, ClubDepartureReason.FIRED);
         career.clearClub();
@@ -232,6 +235,8 @@ public class CareerEngine {
 
     /** El Manager decide renunciar. */
     public void resignManager(Career career) {
+        career.setPendingRenewalOffer(null);
+
         recordDeparture(career, ClubDepartureReason.RESIGNED);
         career.clearClub();
         career.setState(CareerState.LOOKING_FOR_NEW_CLUB);
@@ -251,8 +256,8 @@ public class CareerEngine {
             );
         }
 
-        if (renewalOffer.getClub().getId()
-                != career.getCurrentClub().getId()) {
+        if (!renewalOffer.getClub().getId()
+            .equals(career.getCurrentClub().getId())) {
             throw new IllegalArgumentException(
                     "La renovación no corresponde al club actual."
             );
@@ -283,6 +288,8 @@ public class CareerEngine {
         }
 
         recordDeparture(career, ClubDepartureReason.CONTRACT_ENDED);
+
+        career.setPendingRenewalOffer(null);
 
         career.clearClub();
         career.setState(CareerState.LOOKING_FOR_NEW_CLUB);

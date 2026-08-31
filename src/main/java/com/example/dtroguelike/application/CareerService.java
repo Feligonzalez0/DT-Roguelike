@@ -1,6 +1,7 @@
 package com.example.dtroguelike.application;
 
 import com.example.dtroguelike.domain.career.Career;
+import com.example.dtroguelike.domain.career.CareerEndReason;
 import com.example.dtroguelike.domain.club.Club;
 import com.example.dtroguelike.domain.manager.Manager;
 import com.example.dtroguelike.domain.offer.ClubOffer;
@@ -68,11 +69,7 @@ public class CareerService {
 
         careerEngine.fireManager(career);
 
-        currentOffers = clubOfferGenerator.generateOffers(career, previousClub);
-
-        careerRepository.save(career);
-
-        return new ArrayList<>(currentOffers);
+        return generateOffersAfterDeparture(career, previousClub);
     }
 
     public void retireManager(Career career) {
@@ -87,14 +84,10 @@ public class CareerService {
 
     public List<ClubOffer> resign(Career career) {
         Club previousClub = career.getCurrentClub();
+
         careerEngine.resignManager(career);
 
-        currentOffers = clubOfferGenerator.generateOffers(career, previousClub);
-
-        careerRepository.save(career);
-
-        return new ArrayList<>(currentOffers);
-        
+        return generateOffersAfterDeparture(career, previousClub);
     }
 
     public boolean evaluatePossibleFiring(Career career) {
@@ -138,19 +131,34 @@ public class CareerService {
 
         careerEngine.rejectRenewal(career);
 
-        currentOffers =
-                clubOfferGenerator.generateOffers(career, previousClub);
-
-        careerRepository.save(career);
-
-        return new ArrayList<>(currentOffers);
+        return generateOffersAfterDeparture(career, previousClub);
     }
 
     public List<ClubOffer> generateOffersAfterDeparture(
             Career career,
             Club previousClub) {
 
-        return clubOfferGenerator.generateOffers(career, previousClub);
+        currentOffers =
+                clubOfferGenerator.generateOffers(career, previousClub);
+
+        if (currentOffers.isEmpty()) {
+            career.finish(CareerEndReason.NO_OFFERS);
+        }
+
+        careerRepository.save(career);
+
+        return new ArrayList<>(currentOffers);
+    }
+
+    /*@pre: debe ejecutarse luego de generateOffers(). */
+    public SeasonEndResult processSeasonEnd(Career career) {
+        if (currentOffers.isEmpty()) {
+            career.finish(CareerEndReason.NO_OFFERS);
+            careerRepository.save(career);
+            return SeasonEndResult.CAREER_OVER;
+        }
+
+        return SeasonEndResult.CONTINUE;
     }
 
     /** Descarta la carrera actual para poder comenzar una nueva desde cero. */
