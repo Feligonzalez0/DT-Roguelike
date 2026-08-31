@@ -2,6 +2,9 @@ package com.example.dtroguelike.web.viewmodels;
 
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.career.CareerEndReason;
+import com.example.dtroguelike.domain.career.ClubHistory;
+
+import java.util.List;
 
 public class CareerOverViewModel {
 
@@ -30,9 +33,11 @@ public class CareerOverViewModel {
             );
         }
 
-        if (career.getCurrentClub() == null) {
+        List<ClubHistory> clubHistory = career.getClubHistory();
+
+        if (clubHistory == null || clubHistory.isEmpty()) {
             throw new IllegalStateException(
-                    "No hay un último club disponible."
+                    "No hay historial de clubes disponible."
             );
         }
 
@@ -42,10 +47,12 @@ public class CareerOverViewModel {
             );
         }
 
+        ClubHistory lastClubHistory = clubHistory.get(clubHistory.size() - 1);
+
         this.managerName = career.getManager().getName();
         this.endReason = reason.getMessage();
         this.finalReputation = career.getManager().getReputation();
-        this.lastClubName = career.getCurrentClub().getName();
+        this.lastClubName = lastClubHistory.getClubName();
         this.finalSeason = career.getCurrentSeason().getYear();
     }
 }

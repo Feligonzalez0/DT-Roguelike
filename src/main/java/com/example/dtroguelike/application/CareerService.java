@@ -150,17 +150,6 @@ public class CareerService {
         return new ArrayList<>(currentOffers);
     }
 
-    /*@pre: debe ejecutarse luego de generateOffers(). */
-    public SeasonEndResult processSeasonEnd(Career career) {
-        if (currentOffers.isEmpty()) {
-            career.finish(CareerEndReason.NO_OFFERS);
-            careerRepository.save(career);
-            return SeasonEndResult.CAREER_OVER;
-        }
-
-        return SeasonEndResult.CONTINUE;
-    }
-
     /** Descarta la carrera actual para poder comenzar una nueva desde cero. */
     public void resetCareer() {
         careerRepository.clear();

@@ -123,11 +123,15 @@ public class ClubOfferGenerator {
 
         int chance;
 
+        if (jobSecurity < GameConstants.RENEWAL_VERY_LOW_JOB_SECURITY){
+            return false;
+        }
+
         if (jobSecurity < GameConstants.RENEWAL_LOW_JOB_SECURITY) {
             chance = GameConstants.RENEWAL_LOW_CHANCE;
         } else if (objectiveCompleted
                 && jobSecurity >= GameConstants.RENEWAL_HIGH_JOB_SECURITY) {
-            chance = GameConstants.RENEWAL_HIGH_CHANCE;
+            chance = 100;
         } else if (objectiveCompleted
                 || jobSecurity >= GameConstants.RENEWAL_HIGH_JOB_SECURITY) {
             chance = GameConstants.RENEWAL_MEDIUM_CHANCE;

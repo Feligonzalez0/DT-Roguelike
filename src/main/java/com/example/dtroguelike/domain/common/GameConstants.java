@@ -57,10 +57,11 @@ public final class GameConstants {
     public static final int RENEWAL_HIGH_CHANCE = 80;
     public static final int RENEWAL_MEDIUM_CHANCE = 50;
     public static final int RENEWAL_LOW_CHANCE = 20;
+    
 
     public static final int RENEWAL_HIGH_JOB_SECURITY = 60;
     public static final int RENEWAL_LOW_JOB_SECURITY = 30;
-
+    public static final int RENEWAL_VERY_LOW_JOB_SECURITY = 10;
     // --- Fuerza de equipo (0-100) ---
     public static final int MIN_TEAM_STRENGTH = 0;
     public static final int MAX_TEAM_STRENGTH = 100;

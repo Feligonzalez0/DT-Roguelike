@@ -1,6 +1,5 @@
 package com.example.dtroguelike.web.routes;
 
-import com.example.dtroguelike.application.SeasonEndResult;
 import com.example.dtroguelike.config.AppContext;
 import com.example.dtroguelike.web.controllers.CareerController;
 import com.example.dtroguelike.web.controllers.ClubController;
@@ -15,7 +14,6 @@ import spark.template.mustache.MustacheTemplateEngine;
 import java.util.HashMap;
 import java.util.Map;
 
-import static spark.Spark.before;
 import static spark.Spark.get;
 import static spark.Spark.post;
 

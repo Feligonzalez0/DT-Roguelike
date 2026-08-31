@@ -73,6 +73,13 @@ public class CareerEngine {
         career.assignClub(club);
         career.setContractRemainingYears(contractLength);
         career.setPendingRenewalOffer(null);
+        
+        ClubHistory history = new ClubHistory(
+            club.getId(),
+            club.getName()
+        );
+
+        career.addClubHistory(history);
 
         career.getManager().getStats().incrementClubsManaged();
         career.setState(CareerState.ACTIVE);
@@ -272,6 +279,8 @@ public class CareerEngine {
         career.setContractRemainingYears(
                 renewalOffer.getContractLengthYears()
         );
+        
+        career.setPendingRenewalOffer(null);
 
         int nextYear = career.getCurrentSeason().getYear() + 1;
         startSeason(career, nextYear);

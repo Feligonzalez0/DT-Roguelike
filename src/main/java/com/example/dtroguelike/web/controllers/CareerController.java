@@ -1,7 +1,6 @@
 package com.example.dtroguelike.web.controllers;
 
 import com.example.dtroguelike.application.CareerService;
-import com.example.dtroguelike.application.SeasonEndResult;
 import com.example.dtroguelike.application.SeasonService;
 import com.example.dtroguelike.domain.career.Career;
 import com.example.dtroguelike.domain.match.Match;
@@ -152,11 +151,6 @@ public class CareerController {
         return requireCurrentCareer().isFinished();
     }
     
-    public SeasonEndResult processSeasonEnd() {
-        Career career = requireCurrentCareer();
-        return careerService.processSeasonEnd(career);
-    }
-
     public Map<String, Object> showCareerOver() {
         Career career = requireCurrentCareer();
         CareerOverViewModel viewModel = new CareerOverViewModel(career);
