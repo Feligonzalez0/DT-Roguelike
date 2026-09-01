@@ -51,6 +51,7 @@ com\example\dtroguelike\infrastructure\data\LeagueDto.class
 com\example\dtroguelike\domain\match\Match.class
 com\example\dtroguelike\domain\career\Legacy.class
 com\example\dtroguelike\domain\manager\ManagerStats$MatchOutcomeForManager.class
+com\example\dtroguelike\web\routes\WebRoutes$1.class
 com\example\dtroguelike\application\MatchService.class
 com\example\dtroguelike\domain\common\GamePhase.class
 com\example\dtroguelike\domain\event\EventCondition.class
