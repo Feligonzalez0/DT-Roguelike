@@ -15,6 +15,7 @@ import com.example.dtroguelike.domain.event.Outcome;
 import com.example.dtroguelike.domain.manager.Manager;
 import com.example.dtroguelike.domain.manager.ManagerAttributeType;
 import com.example.dtroguelike.domain.manager.ManagerStyle;
+import com.example.dtroguelike.domain.season.Season;
 import com.example.dtroguelike.domain.season.SeasonPhase;
 import com.example.dtroguelike.engine.CareerEngine;
 import com.example.dtroguelike.engine.DecisionResolver;
@@ -84,7 +85,9 @@ class PreseasonEventTest {
     void preseasonEventOffersThreeUniqueAttributeOptions() {
         EventEngine eventEngine = new EventEngine(List.of(), new Random(7));
 
-        Event event = eventEngine.generatePreseasonEvent();
+        Career career = new Career(new Manager("null", 40, "Arg", ManagerStyle.STRATEGIST));
+        career.setCurrentSeason(new Season(2026,new Club("boca", "Boca","Arg", "LPF", 50, null)));
+        Event event = eventEngine.generatePreseasonEvent(career);
 
         assertEquals(EventType.PRESEASON_DEVELOPMENT, event.getType());
         assertEquals(3, event.getOptions().size());

@@ -15,24 +15,40 @@
         <p class="season-label">NUEVA TEMPORADA</p>
         <h1>{{title}}</h1>
         <p>{{description}}</p>
-        <p class="muted">¿Qué querés mejorar?</p>
+        <p class="muted">¿En qué querés enfocarte esta pretemporada?</p>
     </header>
 
-    <div class="offers-grid">
+    <div class="offers-grid preseason-options">
 
         {{#options}}
 
-        <div class="card offer-card">
+        <div class="card offer-card preseason-option-card">
 
-            <form action="/career/preseason" method="post">
+            <div class="preseason-option-card__content">
 
-                <input type="hidden" name="optionId" value="{{id}}">
+                <h2 class="preseason-option-card__attribute">
+                    {{attributeName}}
+                </h2>
 
-                <button class="btn btn-primary" type="submit">
+                <p class="preseason-option-card__description">
                     {{description}}
-                </button>
+                </p>
 
-            </form>
+                <p class="preseason-option-card__effect">
+                    +{{delta}} {{attributeName}}
+                </p>
+
+                <form action="/career/preseason" method="post">
+
+                    <input type="hidden" name="optionId" value="{{id}}">
+
+                    <button class="btn btn-primary" type="submit">
+                        Elegir
+                    </button>
+
+                </form>
+
+            </div>
 
         </div>
 

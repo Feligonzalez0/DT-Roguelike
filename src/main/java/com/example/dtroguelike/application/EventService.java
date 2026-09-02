@@ -55,7 +55,7 @@ public class EventService {
         Season season = requireSeasonInPreseason(career);
 
         if (season.getPreseasonEvent() == null) {
-            Event event = eventEngine.generatePreseasonEvent();
+            Event event = eventEngine.generatePreseasonEvent(career);
             season.setPreseasonEvent(event);
             season.setPreseasonEventStatus(EventStatus.PENDING);
             careerRepository.save(career);

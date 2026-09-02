@@ -7,6 +7,7 @@ import com.example.dtroguelike.domain.event.Event;
 import com.example.dtroguelike.domain.event.EventOption;
 import com.example.dtroguelike.domain.event.EventType;
 import com.example.dtroguelike.domain.event.Outcome;
+import com.example.dtroguelike.domain.event.OptionNarratives.PreseasonOptionNarratives;
 import com.example.dtroguelike.domain.manager.ManagerAttributeType;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class EventEngine {
      * arma proceduralmente, ya que es un evento estructural del ciclo de
      * temporada y no un evento narrativo aleatorio.
      */
-    public Event generatePreseasonEvent() {
+    public Event generatePreseasonEvent(Career career) {
         List<ManagerAttributeType> pool = new ArrayList<>(List.of(ManagerAttributeType.values()));
         Collections.shuffle(pool, random);
 
@@ -72,12 +73,14 @@ public class EventEngine {
         List<ManagerAttributeType> chosenAttributes = pool.subList(0, optionCount);
 
         int deltaRange = GameConstants.PRESEASON_ATTRIBUTE_MAX_DELTA - GameConstants.PRESEASON_ATTRIBUTE_MIN_DELTA;
-        int delta = GameConstants.PRESEASON_ATTRIBUTE_MIN_DELTA + (deltaRange > 0 ? random.nextInt(deltaRange + 1) : 0);
+        int delta;
 
         List<EventOption> options = new ArrayList<>();
         for (ManagerAttributeType attribute : chosenAttributes) {
+            delta = GameConstants.PRESEASON_ATTRIBUTE_MIN_DELTA + (deltaRange > 0 ? random.nextInt(deltaRange + 1) : 0);
+            
             String optionId = attribute.name().toLowerCase(Locale.ROOT);
-            String description = "Mejorar " + attribute.getDisplayName();
+            String description = PreseasonOptionNarratives.randomMessage(attribute, random);
             Outcome outcome = Outcome.of(
                     attribute.getDisplayName() + " mejorada.",
                     new Effect(attribute.getEffectType(), delta)
@@ -87,10 +90,12 @@ public class EventEngine {
             options.add(new EventOption(optionId, description, 1.0, List.of(), outcome, outcome));
         }
 
+        String title = career.getCurrentSeason().getYear() == java.time.Year.now().getValue() ? "Tu primer día en la oficina" : "Nueva temporada";
+        String desc = career.getCurrentSeason().getYear() == java.time.Year.now().getValue() ? "¿En qué aspecto de tu libreta de mánager te vas a enfocar para tu debut profesional?" : "Después de analizar la temporada anterior, decidís en qué aspecto trabajar durante la nueva temporada";
         return new Event(
                 "preseason-development-" + UUID.randomUUID(),
-                "Nueva temporada",
-                "Después de analizar la temporada anterior, decidís en qué aspecto trabajar durante la nueva temporada.",
+                title,
+                desc,
                 EventType.PRESEASON_DEVELOPMENT,
                 List.of(),
                 options

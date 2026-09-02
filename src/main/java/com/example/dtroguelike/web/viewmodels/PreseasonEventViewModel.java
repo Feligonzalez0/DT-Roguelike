@@ -1,7 +1,9 @@
 package com.example.dtroguelike.web.viewmodels;
 
+import com.example.dtroguelike.domain.event.Effect;
 import com.example.dtroguelike.domain.event.Event;
 import com.example.dtroguelike.domain.event.EventOption;
+import com.example.dtroguelike.domain.manager.ManagerAttributeType;
 
 import java.util.List;
 
@@ -26,10 +28,18 @@ public class PreseasonEventViewModel {
     public static class OptionViewModel {
         public final String id;
         public final String description;
+        public final String attributeName; 
+        public final int delta;
 
         public OptionViewModel(EventOption option) {
             this.id = option.getId();
             this.description = option.getDescription();
+
+            Effect effect = option.getSuccessOutcome().getEffects().getFirst();
+            ManagerAttributeType attribute = ManagerAttributeType.fromEffectType(effect.getType());
+            this.attributeName = attribute.getDisplayName();
+            
+            this.delta = effect.getAmount();
         }
     }
 }
