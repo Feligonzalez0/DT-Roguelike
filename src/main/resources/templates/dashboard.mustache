@@ -441,20 +441,34 @@
 
     <section class="actions">
 
-        <form action="/career/season/advance"
-              method="post">
-
-            <button class="btn btn-primary"
-                    type="submit">
-
-                [DEBUG] Avanzar fase
-
-            </button>
-
-        </form>
-
-
         {{#season}}
+
+            {{#isPreseason}}
+
+            <a href="/career/preseason"
+               class="btn btn-primary">
+
+                Ir a pretemporada
+
+            </a>
+
+            {{/isPreseason}}
+
+            {{^isPreseason}}
+
+            <form action="/career/season/advance"
+                  method="post">
+
+                <button class="btn btn-primary"
+                        type="submit">
+
+                    [DEBUG] Avanzar fase
+
+                </button>
+
+            </form>
+
+            {{/isPreseason}}
 
             {{#isRegularSeason}}
 

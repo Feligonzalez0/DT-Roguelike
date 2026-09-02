@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva temporada - DT Roguelike</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+{{#preseasonEvent}}
+
+<main class="page">
+
+    <header class="page-header">
+        <p class="season-label">NUEVA TEMPORADA</p>
+        <h1>{{title}}</h1>
+        <p>{{description}}</p>
+        <p class="muted">¿Qué querés mejorar?</p>
+    </header>
+
+    <div class="offers-grid">
+
+        {{#options}}
+
+        <div class="card offer-card">
+
+            <form action="/career/preseason" method="post">
+
+                <input type="hidden" name="optionId" value="{{id}}">
+
+                <button class="btn btn-primary" type="submit">
+                    {{description}}
+                </button>
+
+            </form>
+
+        </div>
+
+        {{/options}}
+
+    </div>
+
+</main>
+
+{{/preseasonEvent}}
+
+</body>
+</html>

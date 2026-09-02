@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva temporada - DT Roguelike</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+{{#preseasonResult}}
+
+<main class="page">
+
+    <section class="card">
+
+        <p class="season-label">DECISIÓN APLICADA</p>
+
+        <h1>{{attributeName}} mejorada</h1>
+
+        <p>{{description}}</p>
+
+        <p class="muted">
+            {{attributeName}}: {{before}} → {{after}}
+        </p>
+
+    </section>
+
+    <section class="actions">
+        <a href="/career/dashboard" class="btn btn-primary">
+            Continuar
+        </a>
+    </section>
+
+</main>
+
+{{/preseasonResult}}
+
+</body>
+</html>

@@ -2,6 +2,8 @@ package com.example.dtroguelike.domain.season;
 
 import com.example.dtroguelike.domain.club.Club;
 import com.example.dtroguelike.domain.club.ClubExpectations;
+import com.example.dtroguelike.domain.event.Event;
+import com.example.dtroguelike.domain.event.EventStatus;
 import com.example.dtroguelike.domain.match.Match;
 import com.example.dtroguelike.domain.standings.StandingsTable;
 
@@ -23,6 +25,12 @@ public class Season {
     private SeasonObjective objective;
     private SeasonObjectiveResult objectiveResult;
     private int reputationChange;
+
+    // Evento de pretemporada (ISSUE 11): se genera una unica vez por
+    // temporada y queda referenciado aca para que refrescar la pagina
+    // no dispare un evento nuevo ni permita volver a resolverlo.
+    private Event preseasonEvent;
+    private EventStatus preseasonEventStatus = EventStatus.PENDING;
 
     public Season(int year, Club managedClub) {
         this.year = year;
@@ -136,5 +144,22 @@ public class Season {
 
     public void setStandings(StandingsTable standings) {
         this.standings = standings;
+    }
+
+    // EVENTO DE PRETEMPORADA
+    public Event getPreseasonEvent() {
+        return preseasonEvent;
+    }
+
+    public void setPreseasonEvent(Event preseasonEvent) {
+        this.preseasonEvent = preseasonEvent;
+    }
+
+    public EventStatus getPreseasonEventStatus() {
+        return preseasonEventStatus;
+    }
+
+    public void setPreseasonEventStatus(EventStatus preseasonEventStatus) {
+        this.preseasonEventStatus = preseasonEventStatus;
     }
 }

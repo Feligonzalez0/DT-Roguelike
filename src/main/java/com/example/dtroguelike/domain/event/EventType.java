@@ -11,5 +11,6 @@ public enum EventType {
     CAREER,
     PERSONAL,
     TRANSFER,
-    RANDOM
+    RANDOM,
+    PRESEASON_DEVELOPMENT
 }

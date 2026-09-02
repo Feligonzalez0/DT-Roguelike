@@ -70,6 +70,13 @@ public final class GameConstants {
     public static final int DEFAULT_MANAGER_AGE = 35;
     public static final int RETIREMENT_AGE = 75;
 
+    // --- Evento de pretemporada (mejora de atributos) ---
+    // Cantidad de opciones de atributo que se le ofrecen al jugador.
+    public static final int PRESEASON_OPTION_COUNT = 3;
+    // Rango de la mejora aplicada al atributo elegido (+delta).
+    public static final int PRESEASON_ATTRIBUTE_MIN_DELTA = 2;
+    public static final int PRESEASON_ATTRIBUTE_MAX_DELTA = 5;
+
     // --- Club: valores iniciales ---
     public static final long DEFAULT_CLUB_BUDGET = 1_000_000L;
 

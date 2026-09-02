@@ -61,8 +61,10 @@ public class CareerController {
         Career career = requireCurrentCareer();
 
         switch (career.getCurrentSeason().getPhase()) {
-            case PRESEASON ->
-                    seasonService.startTransferWindow(career);
+            // PRESEASON ya no se avanza con el boton de debug: se
+            // resuelve mediante el evento de pretemporada (ver
+            // PreseasonController / POST /career/preseason), que avanza
+            // automaticamente a TRANSFER_WINDOW al elegir una opcion.
             case TRANSFER_WINDOW ->
                     seasonService.startRegularSeason(career);
             case END_OF_SEASON ->

@@ -7,6 +7,7 @@ import com.example.dtroguelike.web.controllers.FixtureController;
 import com.example.dtroguelike.web.controllers.HomeController;
 import com.example.dtroguelike.web.controllers.ManagerController;
 import com.example.dtroguelike.web.controllers.PhaseAdvanceResult;
+import com.example.dtroguelike.web.controllers.PreseasonController;
 import com.example.dtroguelike.web.controllers.StandingsController;
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
@@ -30,6 +31,7 @@ public class WebRoutes {
     private final CareerController careerController;
     private final FixtureController fixtureController;
     private final StandingsController standingsController;
+    private final PreseasonController preseasonController;
     private final MustacheTemplateEngine templateEngine = new MustacheTemplateEngine();
     
     public WebRoutes(AppContext appContext) {
@@ -39,6 +41,8 @@ public class WebRoutes {
         this.careerController = new CareerController(appContext.getCareerService(), appContext.getSeasonService());
         this.fixtureController = new FixtureController(appContext.getCareerService());
         this.standingsController = new StandingsController(appContext.getCareerService());
+        this.preseasonController = new PreseasonController(
+                appContext.getCareerService(), appContext.getEventService(), appContext.getSeasonService());
     }
 
     public void register() {
@@ -90,6 +94,32 @@ public class WebRoutes {
             careerController.simulateNextMatch();
             res.redirect("/career/dashboard");
             return null;
+        });
+
+        // =========================================================
+        // EVENTO DE PRETEMPORADA (ISSUE 11)
+        // =========================================================
+
+        get("/career/preseason", (req, res) -> {
+            if (!preseasonController.isPreseasonPending()) {
+                // Ya fue resuelto (o la temporada avanzo de fase): no
+                // volver a generar/mostrar el evento, solo redirigir.
+                res.redirect("/career/dashboard");
+                return null;
+            }
+            return render(preseasonController.showPreseasonEvent(), "preseason.mustache");
+        });
+
+        post("/career/preseason", (req, res) -> {
+            try {
+                Map<String, Object> result = preseasonController.resolveDecision(req.queryParams("optionId"));
+                return render(result, "preseason-result.mustache");
+            } catch (IllegalStateException e) {
+                // Evento ya resuelto (doble submit) o fase incorrecta:
+                // no volver a aplicar el efecto, solo redirigir.
+                res.redirect("/career/dashboard");
+                return null;
+            }
         });
 
         post("/career/season/advance", (req, res) -> {

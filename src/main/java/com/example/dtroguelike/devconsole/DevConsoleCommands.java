@@ -157,7 +157,12 @@ public class DevConsoleCommands {
         sb.append("MANAGER\n");
         sb.append("  name: ").append(manager.getName()).append('\n');
         sb.append("  reputation: ").append(manager.getReputation()).append('\n');
-        sb.append("  tactics: ").append(manager.getAttributes().getTactics()).append("\n\n");
+        sb.append("  tactics: ").append(manager.getAttributes().getTactics()).append("\n");
+        sb.append("  leadership: ").append(manager.getAttributes().getLeadership()).append("\n");
+        sb.append("  managment: ").append(manager.getAttributes().getManagement()).append("\n");
+        sb.append("  negotiation: ").append(manager.getAttributes().getNegotiation()).append("\n");
+        sb.append("  youthDevelopment: ").append(manager.getAttributes().getYouthDevelopment()).append("\n");
+        sb.append("  motivation: ").append(manager.getAttributes().getMotivation()).append("\n\n");
 
         sb.append("CAREER\n");
         sb.append("  season: ").append(career.getCurrentSeason() == null

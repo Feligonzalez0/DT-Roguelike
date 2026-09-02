@@ -1,5 +1,12 @@
+com\example\dtroguelike\engine\CareerEngineTest.class
+com\example\dtroguelike\engine\SeasonSimulatorHalvesTest.class
 com\example\dtroguelike\ClubTest.class
+com\example\dtroguelike\domain\season\SeasonObjectiveResultTest.class
 com\example\dtroguelike\MatchSimulatorTest.class
+com\example\dtroguelike\devconsole\DevConsoleCommandsTest.class
 com\example\dtroguelike\EventDecisionTest.class
 com\example\dtroguelike\CareerTest.class
 com\example\dtroguelike\ManagerTest.class
+com\example\dtroguelike\domain\season\SeasonTest.class
+com\example\dtroguelike\engine\SeasonSimulatorHalvesTest$Harness.class
+com\example\dtroguelike\PreseasonEventTest.class
